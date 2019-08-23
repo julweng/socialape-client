@@ -9,10 +9,10 @@ const Home = () => {
   const [screams, setScreams] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("/screams")
-      .then(res => setScreams(res.data))
-      .catch(err => console.log(err));
+    // axios
+    //  .get("/screams")
+    //  .then(res => setScreams(res.data))
+    //  .catch(err => console.log(err));
   }, []);
 
   const recentScreams = screams.length ? (
