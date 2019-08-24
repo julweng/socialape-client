@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { shape, string } from "prop-types";
+import { shape, string, func, bool, oneOfType } from "prop-types";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import withStyles from "@material-ui/core/styles/withStyles";
+// redux
+import { connect } from "react-redux";
+import { loginUser } from "../redux/actions";
+// selectors
+import { user, isUserLoading, userErrors } from "../redux/reducers/selectors";
+// image
 import AppIcon from "../images/icon.png";
-
 // material Ui
+import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
@@ -14,11 +18,9 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 const styles = theme => ({ ...theme.styles });
 
-const Login = ({ classes, history }) => {
+const Login = ({ classes, history, loginUser, user, isLoading, errors }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
 
   const onChange = ev => {
     const { name, value } = ev.target;
@@ -32,20 +34,9 @@ const Login = ({ classes, history }) => {
 
   const onSubmit = ev => {
     ev.preventDefault();
-    setLoading(true);
+
     const userData = { email, password };
-    axios
-      .post("/login", userData)
-      .then(res => {
-        console.log(res.data);
-        localStorage.setItem("FBIdToken", `Bearer ${res.data.token}`);
-        setLoading(false);
-        history.push("/");
-      })
-      .catch(err => {
-        setErrors(err.response.data);
-        setLoading(false);
-      });
+    loginUser(userData, history);
   };
 
   return (
@@ -64,8 +55,8 @@ const Login = ({ classes, history }) => {
             label="Email"
             className={classes.textField}
             value={email}
-            helperText={errors.email}
-            error={errors.email ? true : false}
+            helperText={userErrors.email}
+            error={userErrors.email ? true : false}
             onChange={onChange}
           />
           <TextField
@@ -89,10 +80,10 @@ const Login = ({ classes, history }) => {
             variant="contained"
             color="primary"
             className={classes.button}
-            disabled={loading}
+            disabled={isLoading}
           >
             Login
-            {loading && (
+            {isLoading && (
               <CircularProgress className={classes.progress} size={30} />
             )}
           </Button>
@@ -118,7 +109,31 @@ Login.propTypes = {
     textField: string,
     button: string,
     customError: string
-  }).isRequired
+  }).isRequired,
+  loginUser: func,
+  user: shape({}),
+  isLoading: bool,
+  errors:
+    oneOfType([
+      bool,
+      shape({
+        email: string,
+        password: string
+      })
+    ])
 };
 
-export default withStyles(styles)(Login);
+const mapStateToProps = state => ({
+  user: user(state),
+  isLoading: isUserLoading(state),
+  errors: userErrors(state)
+});
+
+const mapDispatchToProps = {
+  loginUser
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(Login));

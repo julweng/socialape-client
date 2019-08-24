@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "axios"
 // material UI
 import Grid from "@material-ui/core/Grid";
 // components
@@ -9,10 +9,10 @@ const Home = () => {
   const [screams, setScreams] = useState([]);
 
   useEffect(() => {
-    // axios
-    //  .get("/screams")
-    //  .then(res => setScreams(res.data))
-    //  .catch(err => console.log(err));
+    axios
+      .get("/screams")
+      .then(res => setScreams(res.data))
+      .catch(err => console.log(err));
   }, []);
 
   const recentScreams = screams.length ? (
