@@ -1,26 +1,28 @@
 import React, { useState } from "react";
-import { shape, string } from "prop-types";
+import { shape, string, bool, func } from "prop-types";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import withStyles from "@material-ui/core/styles/withStyles";
-import AppIcon from "../images/icon.png";
-
+import { connect } from "react-redux";
 // material Ui
+import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
+// action creators
+import { signupUser } from "../redux/actions";
+// selectors
+import { userLoadingStatus, signupErrors } from "../redux/reducers/selectors";
+// logo
+import AppIcon from "../images/icon.png";
 
 const styles = theme => ({ ...theme.styles });
 
-const Signup = ({ classes, history }) => {
+const Signup = ({ classes, history, loading, errors, signupUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [handle, setHandle] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
 
   const onChange = ev => {
     const { name, value } = ev.target;
@@ -32,25 +34,13 @@ const Signup = ({ classes, history }) => {
 
   const onSubmit = ev => {
     ev.preventDefault();
-    setLoading(true);
     const userData = {
       email,
       password,
       confirmPassword,
       handle
     };
-    axios
-      .post("/signup", userData)
-      .then(res => {
-        console.log(res.data);
-        localStorage.setItem("FBIdToken", `Bearer ${res.data.token}`);
-        setLoading(false);
-        history.push("/");
-      })
-      .catch(err => {
-        setErrors(err.response.data);
-        setLoading(false);
-      });
+    signupUser(userData, history);
   };
 
   return (
@@ -125,7 +115,7 @@ const Signup = ({ classes, history }) => {
           </Button>
           <br />
           <small>
-            Don't have an account? Log in{" "}
+            Already have an account? Log in{" "}
             <Link to="/login" className="linkColor">
               here
             </Link>
@@ -145,7 +135,23 @@ Signup.propTypes = {
     textField: string,
     button: string,
     customError: string
-  }).isRequired
+  }).isRequired,
+  signupUser: func.isRequired,
+  loading: bool,
+  errors: shape({
+      email: string,
+      password: string,
+      confirmPassword: string,
+      handle: string
+  })
 };
 
-export default withStyles(styles)(Signup);
+const mapStateToProps = state => ({
+  loading: userLoadingStatus(state),
+  errors: signupErrors(state)
+});
+
+export default connect(
+  mapStateToProps,
+  { signupUser }
+)(withStyles(styles)(Signup));

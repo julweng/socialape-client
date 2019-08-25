@@ -1,6 +1,12 @@
 import axios from "axios";
 import ActionTypes from "../types";
 
+const setAuthentication = token => {
+  const FBIdToken = `Bearer ${token}`;
+  localStorage.setItem("FBIdToken", `Bearer ${token}`);
+  axios.defaults.headers.common["Authorization"] = FBIdToken;
+}
+
 // get user
 const getUserRequest = () => {
   return {
@@ -34,19 +40,19 @@ export const getUser = () => dispatch => {
 // login user
 const loginUserRequest = () => {
   return {
-    type: ActionTypes.AUTHENTICATED_USER_REQUEST
+    type: ActionTypes.AUTHENTICATE_USER_REQUEST
   }
 }
 
 const loginUserSuccess = () => {
   return {
-    type: ActionTypes.AUTHENTICATED_USER_SUCCESS
+    type: ActionTypes.AUTHENTICATE_USER_SUCCESS
   }
 }
 
 const loginUserFailure = err => {
   return {
-    type: ActionTypes.AUTHENTICATED_USER_FAILURE,
+    type: ActionTypes.AUTHENTICATE_USER_FAILURE,
     err
   }
 }
@@ -56,9 +62,7 @@ export const loginUser = (userData, history) => dispatch => {
   axios
     .post("/login", userData)
     .then(res => {
-      const FBIdToken = `Bearer ${res.data.token}`;
-      localStorage.setItem("FBIdToken", `Bearer ${res.data.token}`);
-      axios.defaults.headers.common["Authorization"] = FBIdToken;
+      setAuthentication(res.data.token);
       dispatch(loginUserSuccess());
       dispatch(getUser());
       history.push("/");
@@ -67,6 +71,56 @@ export const loginUser = (userData, history) => dispatch => {
       dispatch(loginUserFailure(err.response.data))
     });
 };
+
+// signup user
+const signupUserRequest = () => {
+  return {
+    type: ActionTypes.SIGNUP_USER_REQUEST
+  }
+}
+
+const signupUserSuccess = () => {
+  return {
+    type: ActionTypes.SIGNUP_USER_SUCCESS
+  }
+}
+
+const signupUserFailure = err => {
+  return {
+    type: ActionTypes.SIGNUP_USER_FAILURE,
+    err
+  }
+}
+
+export const signupUser = (userData, history) => dispatch => {
+  dispatch(signupUserRequest());
+  axios
+    .post("/signup", userData)
+    .then(res => {
+      setAuthentication(res.data.token);
+      dispatch(signupUserSuccess());
+      dispatch(getUser());
+      history.push("/");
+    })
+    .catch(err => {
+      console.log(err.response.data)
+      dispatch(signupUserFailure(err.response.data))
+    });
+};
+
+// logout user
+export const logoutUser = () => dispatch => {
+  localStorage.removeItem("FBIdToken");
+  delete axios.defaults.headers.common["Authorization"];
+  dispatch({ type: ActionTypes.UNAUTHENTICATE_USER })
+}
+
+// re-authenticate user if token is not expired
+export const reAuthenticateUser = token => dispatch => {
+  dispatch(loginUserSuccess());
+  axios.defaults.headers.common['Authorization'] = token;
+  //dispatch(getUser());
+}
 
 
 

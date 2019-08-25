@@ -1,6 +1,9 @@
 import React from "react";
 import { node, bool } from "prop-types";
+import { connect } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
+// selector
+import { user } from "../redux/reducers/selectors";
 
 const AuthRoute = ({ component: Component, authenticated, ...children }) => {
   return (
@@ -19,4 +22,8 @@ AuthRoute.propTypes = {
   authenticated: bool
 };
 
-export default AuthRoute;
+const mapStateToProps = state => ({
+  authenticated: user(state).authenticated
+})
+
+export default connect(mapStateToProps, null)(AuthRoute);

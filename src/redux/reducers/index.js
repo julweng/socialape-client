@@ -1,7 +1,7 @@
 import { combineReducers } from "redux"
 
-import dataReducer from "./dataReducer"
-import uiReducer from "./uiReducer"
+// import dataReducer from "./dataReducer"
+// import uiReducer from "./uiReducer"
 import userReducer from "./userReducer"
 import loadingReducer from "./loadingReducer"
 import errorReducer from "./errorReducer"
