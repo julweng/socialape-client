@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import axios from "axios"
 // material UI
 import Grid from "@material-ui/core/Grid";
 // components
 import Scream from "../components/Scream";
+import Profile from "../components/Profile";
+import { getUser } from "../redux/actions/userActions";
 
-const Home = () => {
+const Home = props => {
   const [screams, setScreams] = useState([]);
 
   useEffect(() => {
+    props.getUser()
     axios
       .get("/screams")
       .then(res => setScreams(res.data))
@@ -27,10 +31,10 @@ const Home = () => {
         {recentScreams}
       </Grid>
       <Grid item sm={4} xs={12}>
-        <p>Profile...</p>
+        <Profile />
       </Grid>
     </Grid>
   );
 };
 
-export default Home;
+export default connect(null, { getUser })(Home);

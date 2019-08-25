@@ -137,7 +137,7 @@ Signup.propTypes = {
     customError: string
   }).isRequired,
   signupUser: func.isRequired,
-  loading: bool,
+  loading: bool.isRequired,
   errors: shape({
       email: string,
       password: string,

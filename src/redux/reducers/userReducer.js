@@ -6,7 +6,14 @@ import ActionTypes from "../types";
 
 const initialState = {
   authenticated: false,
-  credentials: {},
+  credentials: {
+    bio: "",
+    createdAt: "",
+    imageUrl: "",
+    location: "",
+    handle: "",
+    website: ""
+  },
   likes: [],
   notifications: [],
   authErrors: {
@@ -34,11 +41,13 @@ export default function(state = initialState, action) {
       };
     case ActionTypes.UNAUTHENTICATE_USER:
       return initialState;
-    case ActionTypes.GET_USER_SUCCESS:
+    case ActionTypes.GET_USER_SUCCESS: {
+      console.log(action.data)
       return {
         authenticated: true,
         ...action.data
       };
+    }
     case ActionTypes.AUTHENTICATE_USER_FAILURE:
       return {
         ...state,

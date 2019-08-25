@@ -116,7 +116,7 @@ Login.propTypes = {
     customError: string
   }).isRequired,
   loginUser: func.isRequired,
-  loading: bool,
+  loading: bool.isRequired,
   errors: shape({
     email: string,
     password: string

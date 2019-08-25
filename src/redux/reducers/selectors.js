@@ -1,6 +1,6 @@
 // user store selectors
 export { 
-  userStore as user,
+  userStore,
   userLoadingStatus,
   userErrorStatus,
   authErrors,
