@@ -107,14 +107,7 @@ const Login = ({ classes, history, loginUser, loading, errors }) => {
 };
 
 Login.propTypes = {
-  classes: shape({
-    form: string,
-    image: string,
-    pageTitle: string,
-    textField: string,
-    button: string,
-    customError: string
-  }).isRequired,
+  classes: shape({}).isRequired,
   loginUser: func.isRequired,
   loading: bool.isRequired,
   errors: shape({

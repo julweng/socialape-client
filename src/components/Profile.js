@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { shape, bool, func } from "prop-types";
 import { Link } from "react-router-dom";
@@ -15,6 +15,9 @@ import CalendarToday from "@material-ui/icons/CalendarToday";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
 import Tooltip from "@material-ui/core/Tooltip";
+import KeyboardReturn from "@material-ui/icons/KeyboardReturn";
+// component
+import EditDetails from "./EditDetails"
 // action creators
 import { getUser, uploadImage, logoutUser } from "../redux/actions";
 // selectors
@@ -83,17 +86,19 @@ const Profile = ({
     getUser();
   }, [getUser]);
 
-  const handleImageChange = ev => {
-    const image = ev.target.files[0];
-    const formData = new FormData();
-    formData.append("image", image, image.name);
-    uploadImage(formData)
-  };
-
   const handleEditPicture = () => {
     const fileInput = document.getElementById("image-upload");
     fileInput.click();
   };
+
+  const handleImageChange = ev => {
+    const image = ev.target.files[0];
+    const formData = new FormData();
+    formData.append("image", image, image.name);
+    uploadImage(formData);
+  };
+
+  const handleLogout = () => logoutUser();
 
   const profileMarkup = !loading ? (
     authenticated ? (
@@ -145,6 +150,12 @@ const Profile = ({
             <CalendarToday color="primary" />{" "}
             <span>Joined {dayjs(createdAt).format("MMM YYYY")}</span>
           </div>
+          <Tooltip title="Logout" placement="top">
+            <IconButton onClick={handleLogout}>
+              <KeyboardReturn color="primary" />
+            </IconButton>
+          </Tooltip>
+          <EditDetails />
         </div>
       </Paper>
     ) : (

@@ -155,5 +155,38 @@ export const uploadImage = formData => dispatch => {
     })
 }
 
+// edit user details
+const editUserDetailsRequest = () => {
+  return {
+    type: ActionTypes.EDIT_USER_DETAILS_REQUEST
+  }
+}
+
+const editUserDetailsSuccess = () => {
+  return {
+    type: ActionTypes.EDIT_USER_DETAILS_SUCCESS
+  }
+}
+
+const editUserDetailsFailure = err => {
+  return {
+    type: ActionTypes.EDIT_USER_DETAILS_FAILURE,
+    err
+  }
+}
+
+export const editUserDetails = userDetails => dispatch => {
+  dispatch(editUserDetailsRequest())
+  axios.post("/user", userDetails)
+  .then(() => {
+    dispatch(editUserDetailsSuccess())
+    dispatch(getUser())
+  })
+  .catch(err => {
+    console.log(err)
+    dispatch(editUserDetailsFailure())
+  })
+}
+
 
 

@@ -128,14 +128,7 @@ const Signup = ({ classes, history, loading, errors, signupUser }) => {
 };
 
 Signup.propTypes = {
-  classes: shape({
-    form: string,
-    image: string,
-    pageTitle: string,
-    textField: string,
-    button: string,
-    customError: string
-  }).isRequired,
+  classes: shape({}).isRequired,
   signupUser: func.isRequired,
   loading: bool.isRequired,
   errors: shape({

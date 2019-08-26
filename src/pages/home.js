@@ -33,5 +33,9 @@ const Home = props => {
     </Grid>
   );
 };
+/*
+Home.propTypes = {
 
+};
+*/
 export default Home;

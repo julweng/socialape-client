@@ -62,6 +62,11 @@ export default function(state = initialState, action) {
         ...state,
         userErrors: action.err
       };
+    case ActionTypes.UPLOAD_IMAGE_SUCCESS: 
+    case ActionTypes.EDIT_USER_DETAILS_SUCCESS:
+    return {
+      ...state
+    }
     default:
       return state;
   }
@@ -84,12 +89,16 @@ export const signupErrors = createSelector(
 export const userLoadingStatus = createLoadingSelector([
   "AUTHENTICATED_USER",
   "SIGNUP_USER",
-  "GET_USER"
+  "GET_USER",
+  "UPLOAD_IMAGE",
+  "EDIT_USER"
 ]);
 
 // error status selector
 export const userErrorStatus = createErrorSelector([
   "AUTHENTICATED_USER",
   "SIGNUP_USER",
-  "GET_USER"
+  "GET_USER",
+  "UPLOAD_IMAGE",
+  "EDIT_USER"
 ]);
