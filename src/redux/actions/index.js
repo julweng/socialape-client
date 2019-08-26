@@ -4,5 +4,6 @@ export {
   getUser,
   signupUser,
   logoutUser,
-  reAuthenticateUser
+  reAuthenticateUser,
+  uploadImage
 } from "./userActions";

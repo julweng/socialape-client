@@ -42,7 +42,6 @@ export default function(state = initialState, action) {
     case ActionTypes.UNAUTHENTICATE_USER:
       return initialState;
     case ActionTypes.GET_USER_SUCCESS: {
-      console.log(action.data)
       return {
         authenticated: true,
         ...action.data

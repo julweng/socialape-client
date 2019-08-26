@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { shape, bool } from "prop-types";
+import { shape, bool, func } from "prop-types";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 // material UI
@@ -12,6 +12,11 @@ import Typography from "@material-ui/core/Typography";
 import LocationOn from "@material-ui/icons/LocationOn";
 import LinkIcon from "@material-ui/icons/Link";
 import CalendarToday from "@material-ui/icons/CalendarToday";
+import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
+import Tooltip from "@material-ui/core/Tooltip";
+// action creators
+import { getUser, uploadImage, logoutUser } from "../redux/actions";
 // selectors
 import { userStore, userLoadingStatus } from "../redux/reducers/selectors";
 
@@ -65,18 +70,48 @@ const styles = theme => ({
 
 const Profile = ({
   classes,
+  getUser,
+  uploadImage,
+  logoutUser,
   loading,
   user: {
     authenticated,
     credentials: { bio, createdAt, handle, imageUrl, location, website }
   }
 } = {}) => {
+  useEffect(() => {
+    getUser();
+  }, [getUser]);
+
+  const handleImageChange = ev => {
+    const image = ev.target.files[0];
+    const formData = new FormData();
+    formData.append("image", image, image.name);
+    uploadImage(formData)
+  };
+
+  const handleEditPicture = () => {
+    const fileInput = document.getElementById("image-upload");
+    fileInput.click();
+  };
+
   const profileMarkup = !loading ? (
     authenticated ? (
       <Paper className={classes.paper}>
         <div className={classes.profile}>
           <div className="image-wrapper">
             <img src={imageUrl} alt="profile" className="profile-image" />
+            <input
+              type="file"
+              id="image-upload"
+              hidden="hidden"
+              onChange={handleImageChange}
+            />
+            <Tooltip title="Edit profile picture" placement="top">
+              <IconButton className="button" onClick={handleEditPicture}>
+                <EditIcon color="primary" />
+              </IconButton>
+            </Tooltip>
           </div>
           <hr />
           <div className="profile-details">
@@ -149,7 +184,10 @@ Profile.propTypes = {
     authenticated: bool,
     credentials: shape({})
   }).isRequired,
-  loading: bool
+  loading: bool,
+  getUser: func.isRequired,
+  uploadImage: func.isRequired,
+  logoutUser: func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -157,7 +195,13 @@ const mapStateToProps = state => ({
   loading: userLoadingStatus(state)
 });
 
+const mapDispatchToProps = {
+  getUser,
+  logoutUser,
+  uploadImage
+};
+
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(withStyles(styles)(Profile));

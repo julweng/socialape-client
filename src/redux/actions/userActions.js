@@ -122,5 +122,38 @@ export const reAuthenticateUser = token => dispatch => {
   //dispatch(getUser());
 }
 
+// upload image
+const uploadImageRequest = () => {
+  return {
+    type: ActionTypes.UPLOAD_IMAGE_REQUEST
+  }
+}
+
+const uploadImageSuccess = () => {
+  return {
+    type: ActionTypes.UPLOAD_IMAGE_SUCCESS
+  }
+}
+
+const uploadImageFailure = err => {
+  return {
+    type: ActionTypes.UPLOAD_IMAGE_FAILURE,
+    err
+  }
+}
+
+export const uploadImage = formData => dispatch => {
+  dispatch(uploadImageRequest())
+  axios.post("/user/image", formData)
+    .then(() => {
+      dispatch(getUser())
+      dispatch(uploadImageSuccess())
+    })
+    .catch(err => {
+      console.log(err)
+      dispatch(uploadImageFailure())
+    })
+}
+
 
 
