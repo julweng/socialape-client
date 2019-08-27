@@ -67,6 +67,22 @@ export default function(state = initialState, action) {
       return {
         ...state
       };
+    case ActionTypes.LIKE_SCREAM_SUCCESS:
+      return {
+        ...state,
+        likes: [
+          ...state.likes,
+          {
+            userHandle: state.credentials.handle,
+            screamId: action.scream.screamId
+          }
+        ]
+      };
+    case ActionTypes.UNLIKE_SCREAM_SUCCESS:
+      return {
+        ...state,
+        likes: state.likes.filter(l => l.screamId !== action.scream.screamId)
+      };
     default:
       return state;
   }
@@ -81,10 +97,17 @@ export const authSelector = createSelector(
   state => get(state, "authenticated", false)
 );
 
+// credentials selector
 export const credentialsSelector = createSelector(
   userStore,
   state => get(state, "credentials", {})
-)
+);
+
+// likes selector
+export const likesSelector = createSelector(
+  userStore,
+  state => get(state, "likes", [])
+);
 
 // error selectors
 export const authErrors = createSelector(

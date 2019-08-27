@@ -1,6 +1,7 @@
 import React from "react";
-import { shape, string } from "prop-types";
+import { shape, string, func, arrayOf, bool } from "prop-types";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 // material UI
@@ -9,6 +10,20 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
+import ChatIcon from "@material-ui/icons/Chat";
+import FavoriteIcon from "@material-ui/icons/Favorite";
+import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
+// redux
+import { likeScream, unlikeScream } from "../redux/actions";
+import {
+  userStore,
+  authSelector,
+  likesSelector
+} from "../redux/reducers/selectors";
+// components
+import CommonButton from "../util/commonButton";
+// helper
+import isScreamLiked from "./functions/isScreamLiked";
 
 const styles = {
   card: {
@@ -26,17 +41,43 @@ const styles = {
 
 const Scream = ({
   classes,
+  authenticated,
+  likes,
   scream: {
     body,
     createdAt,
-    // commentCount,
-    // likeCount,
-    // screamId,
+    commentCount,
+    likeCount,
+    screamId,
     userHandle,
     userImage
-  }
+  },
+  likeScream,
+  unlikeScream
 }) => {
   dayjs.extend(relativeTime);
+
+  const screamHasBeenLiked = isScreamLiked(likes, screamId);
+
+  const handleLikeScream = () => likeScream(screamId);
+
+  const handleUnlikeScream = () => unlikeScream(screamId);
+
+  const likeButton = !authenticated ? (
+    <CommonButton tip="Like">
+      <Link to="/login">
+        <FavoriteBorder color="primary" />
+      </Link>
+    </CommonButton>
+  ) : screamHasBeenLiked ? (
+    <CommonButton tip="Undo like" onClick={handleUnlikeScream}>
+      <FavoriteIcon color="primary" />
+    </CommonButton>
+  ) : (
+    <CommonButton tip="Like" onClick={handleLikeScream}>
+      <FavoriteBorder color="primary" />
+    </CommonButton>
+  );
 
   return (
     <Card className={classes.card}>
@@ -58,6 +99,12 @@ const Scream = ({
           {dayjs(createdAt).fromNow()}
         </Typography>
         <Typography variant="body1">{body}</Typography>
+        {likeButton}
+        <span>{likeCount} Likes</span>
+        <CommonButton tip="comments">
+          <ChatIcon color="primary" />
+        </CommonButton>
+        <span>{commentCount} Comments</span>
       </CardContent>
     </Card>
   );
@@ -69,14 +116,32 @@ Scream.propTypes = {
     image: string,
     content: string
   }).isRequired,
-
   body: string,
   createdAt: string,
   // commentCount,
   // likeCount,
   // screamId,
   userHandle: string,
-  userImage: string
+  userImage: string,
+  likeScream: func.isRequired,
+  unlikeScream: func.isRequired,
+  scream: shape({}),
+  authenticated: bool,
+  likes: arrayOf(shape({}))
 };
 
-export default withStyles(styles)(Scream);
+const mapStateToProps = state => ({
+  user: userStore(state),
+  authenticated: authSelector(state),
+  likes: likesSelector(state)
+});
+
+const mapDispatchToProps = {
+  likeScream,
+  unlikeScream
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(Scream));

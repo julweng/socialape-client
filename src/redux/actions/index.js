@@ -1,4 +1,3 @@
-// export dataActions from "./dataActions"
 export {
   loginUser,
   getUser,
@@ -8,3 +7,10 @@ export {
   uploadImage,
   editUserDetails
 } from "./userActions";
+
+export {
+  getScreams,
+  likeScream,
+  unlikeScream
+} from "./dataActions"
+
