@@ -12,16 +12,19 @@ import Typography from "@material-ui/core/Typography";
 import LocationOn from "@material-ui/icons/LocationOn";
 import LinkIcon from "@material-ui/icons/Link";
 import CalendarToday from "@material-ui/icons/CalendarToday";
-import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
-import Tooltip from "@material-ui/core/Tooltip";
 import KeyboardReturn from "@material-ui/icons/KeyboardReturn";
 // component
-import EditDetails from "./EditDetails"
+import EditDetails from "./EditDetails";
+import CommonButton from "../util/commonButton";
 // action creators
 import { getUser, uploadImage, logoutUser } from "../redux/actions";
 // selectors
-import { userStore, userLoadingStatus } from "../redux/reducers/selectors";
+import {
+  credentialsSelector,
+  authSelector,
+  userLoadingStatus
+} from "../redux/reducers/selectors";
 
 const styles = theme => ({
   paper: {
@@ -77,10 +80,8 @@ const Profile = ({
   uploadImage,
   logoutUser,
   loading,
-  user: {
-    authenticated,
-    credentials: { bio, createdAt, handle, imageUrl, location, website }
-  }
+  authenticated,
+  credentials: { bio, createdAt, handle, imageUrl, location, website }
 } = {}) => {
   useEffect(() => {
     getUser();
@@ -112,11 +113,13 @@ const Profile = ({
               hidden="hidden"
               onChange={handleImageChange}
             />
-            <Tooltip title="Edit profile picture" placement="top">
-              <IconButton className="button" onClick={handleEditPicture}>
-                <EditIcon color="primary" />
-              </IconButton>
-            </Tooltip>
+            <CommonButton
+              tip="Edit profile picture"
+              onClick={handleEditPicture}
+              btnClassName="button"
+            >
+              <EditIcon color="primary" />
+            </CommonButton>
           </div>
           <hr />
           <div className="profile-details">
@@ -150,11 +153,9 @@ const Profile = ({
             <CalendarToday color="primary" />{" "}
             <span>Joined {dayjs(createdAt).format("MMM YYYY")}</span>
           </div>
-          <Tooltip title="Logout" placement="top">
-            <IconButton onClick={handleLogout}>
-              <KeyboardReturn color="primary" />
-            </IconButton>
-          </Tooltip>
+          <CommonButton tip="Logout" onClick={handleLogout}>
+            <KeyboardReturn color="primary" />
+          </CommonButton>
           <EditDetails />
         </div>
       </Paper>
@@ -191,10 +192,8 @@ const Profile = ({
 
 Profile.propTypes = {
   classes: shape({}).isRequired,
-  user: shape({
-    authenticated: bool,
-    credentials: shape({})
-  }).isRequired,
+  authenticated: bool.isRequired,
+  credentials: shape({}).isRequired,
   loading: bool,
   getUser: func.isRequired,
   uploadImage: func.isRequired,
@@ -202,7 +201,8 @@ Profile.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  user: userStore(state),
+  authenticated: authSelector(state),
+  credentials: credentialsSelector(state),
   loading: userLoadingStatus(state)
 });
 

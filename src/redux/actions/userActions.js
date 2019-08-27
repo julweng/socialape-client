@@ -64,7 +64,6 @@ export const loginUser = (userData, history) => dispatch => {
     .then(res => {
       setAuthentication(res.data.token);
       dispatch(loginUserSuccess());
-      dispatch(getUser());
       history.push("/");
     })
     .catch(err => {
@@ -99,7 +98,6 @@ export const signupUser = (userData, history) => dispatch => {
     .then(res => {
       setAuthentication(res.data.token);
       dispatch(signupUserSuccess());
-      dispatch(getUser());
       history.push("/");
     })
     .catch(err => {

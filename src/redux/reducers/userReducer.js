@@ -62,11 +62,11 @@ export default function(state = initialState, action) {
         ...state,
         userErrors: action.err
       };
-    case ActionTypes.UPLOAD_IMAGE_SUCCESS: 
+    case ActionTypes.UPLOAD_IMAGE_SUCCESS:
     case ActionTypes.EDIT_USER_DETAILS_SUCCESS:
-    return {
-      ...state
-    }
+      return {
+        ...state
+      };
     default:
       return state;
   }
@@ -74,6 +74,17 @@ export default function(state = initialState, action) {
 
 // user selectors
 export const userStore = rootState => get(rootState, "user", {});
+
+// authSelector
+export const authSelector = createSelector(
+  userStore,
+  state => get(state, "authenticated", false)
+);
+
+export const credentialsSelector = createSelector(
+  userStore,
+  state => get(state, "credentials", {})
+)
 
 // error selectors
 export const authErrors = createSelector(

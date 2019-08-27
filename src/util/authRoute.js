@@ -3,7 +3,7 @@ import { node, bool } from "prop-types";
 import { connect } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
 // selector
-import { userStore } from "../redux/reducers/selectors";
+import { authSelector } from "../redux/reducers/selectors";
 
 const AuthRoute = ({ component: Component, authenticated, ...children }) => {
   return (
@@ -23,7 +23,7 @@ AuthRoute.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  authenticated: userStore(state).authenticated
+  authenticated: authSelector(state)
 })
 
 export default connect(mapStateToProps, null)(AuthRoute);
