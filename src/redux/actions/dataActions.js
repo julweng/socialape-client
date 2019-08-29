@@ -100,4 +100,34 @@ export const unlikeScream = screamId => dispatch => {
     });
 };
 
+// delete a scream
+const deleteScreamRequest = () => {
+  return {
+    type: ActionTypes.DELETE_SCREAM_REQUEST
+  };
+};
 
+const deleteScreamSuccess = screamId => {
+  return {
+    type: ActionTypes.DELETE_SCREAM_SUCCESS,
+    screamId
+  };
+};
+
+const deleteScreamFailure = err => {
+  return {
+    type: ActionTypes.DELETE_SCREAM_FAILURE,
+    err
+  };
+};
+
+export const deleteScream = screamId => dispatch => {
+  dispatch(deleteScreamRequest());
+  axios
+    .delete(`/scream/${screamId}`)
+    .then(() => dispatch(deleteScreamSuccess(screamId)))
+    .catch(err => {
+      console.log(err.response.data);
+      dispatch(deleteScreamFailure());
+    });
+};

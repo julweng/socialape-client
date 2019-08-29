@@ -11,6 +11,7 @@ export {
 export {
   getScreams,
   likeScream,
-  unlikeScream
+  unlikeScream,
+  deleteScream
 } from "./dataActions"
 

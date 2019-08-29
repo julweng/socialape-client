@@ -24,6 +24,12 @@ export default function(state = initialState, action) {
         scream: state.scream.screamId === action.scream.screamId ? action.scream : state.scream
       };
 
+    case ActionTypes.DELETE_SCREAM_SUCCESS:
+      return {
+        ...state,
+        screams: state.screams.filter(s => s.screamId !== action.screamId)
+      }
+
     default:
       return state;
   }

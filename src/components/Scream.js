@@ -16,17 +16,19 @@ import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
 // redux
 import { likeScream, unlikeScream } from "../redux/actions";
 import {
-  userStore,
   authSelector,
-  likesSelector
+  likesSelector,
+  credentialsSelector
 } from "../redux/reducers/selectors";
 // components
 import CommonButton from "../util/commonButton";
+import DeleteScream from "./DeleteScream"
 // helper
 import isScreamLiked from "./functions/isScreamLiked";
 
 const styles = {
   card: {
+    position: "relative",
     display: "flex",
     marginBottom: 20
   },
@@ -42,6 +44,9 @@ const styles = {
 const Scream = ({
   classes,
   authenticated,
+  credentials: {
+    handle
+  },
   likes,
   scream: {
     body,
@@ -55,6 +60,7 @@ const Scream = ({
   likeScream,
   unlikeScream
 }) => {
+  console.log(userHandle, handle)
   dayjs.extend(relativeTime);
 
   const screamHasBeenLiked = isScreamLiked(likes, screamId);
@@ -79,6 +85,9 @@ const Scream = ({
     </CommonButton>
   );
 
+  const deleteButton = authenticated && userHandle === handle ? (
+    <DeleteScream screamId={screamId} />
+  ) : null
   return (
     <Card className={classes.card}>
       <CardMedia
@@ -95,6 +104,7 @@ const Scream = ({
         >
           {userHandle}
         </Typography>
+        {deleteButton}
         <Typography variant="body2" color="textSecondary">
           {dayjs(createdAt).fromNow()}
         </Typography>
@@ -127,11 +137,14 @@ Scream.propTypes = {
   unlikeScream: func.isRequired,
   scream: shape({}),
   authenticated: bool,
-  likes: arrayOf(shape({}))
+  likes: arrayOf(shape({})),
+  credentials: shape({
+    handle: string
+  })
 };
 
 const mapStateToProps = state => ({
-  user: userStore(state),
+  credentials: credentialsSelector(state),
   authenticated: authSelector(state),
   likes: likesSelector(state)
 });
