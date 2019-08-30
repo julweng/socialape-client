@@ -8,11 +8,11 @@ import { authSelector } from "../redux/reducers/selectors";
 import AppBar from "@material-ui/core/AppBar";
 import ToolBar from "@material-ui/core/ToolBar";
 import Button from "@material-ui/core/Button";
-import AddIcon from "@material-ui/icons/Add";
 import HomeIcon from "@material-ui/icons/Home";
 import Notifications from "@material-ui/icons/Notifications";
 // component
 import CommonButton from "../util/commonButton";
+import PostScream from "./PostScream";
 
 const Navbar = ({ authenticated }) => {
   return (
@@ -20,9 +20,7 @@ const Navbar = ({ authenticated }) => {
       <ToolBar className="nav__container">
         {authenticated ? (
           <>
-            <CommonButton tip="Post a scream">
-              <AddIcon />
-            </CommonButton>
+          <PostScream />
             <Link to="/">
               <CommonButton tip="Home">
                 <HomeIcon />

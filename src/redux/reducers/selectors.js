@@ -16,5 +16,6 @@ export {
   screamsSelector,
   singleScreamSelector,
   dataLoadingStatus,
-  dataErrorStatus
+  dataErrorStatus,
+  dataErrorsSelector
 } from "./dataReducer"

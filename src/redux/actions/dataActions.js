@@ -34,6 +34,40 @@ export const getScreams = () => dispatch => {
     });
 };
 
+// post a scream
+const postScreamRequest = () => {
+  return {
+    type: ActionTypes.POST_SCREAM_REQUEST
+  };
+};
+
+const postScreamSuccess = scream => {
+  return {
+    type: ActionTypes.POST_SCREAM_SUCCESS,
+    scream
+  };
+};
+
+const postScreamFailure = err => {
+  return {
+    type: ActionTypes.POST_SCREAM_FAILURE,
+    err
+  };
+};
+
+export const postScream = newScream => dispatch => {
+  dispatch(postScreamRequest());
+  axios
+    .post("/scream", newScream)
+    .then(res => dispatch(postScreamSuccess(res.data)))
+
+    .catch(err => {
+      console.log(err.response.data);
+      dispatch(postScreamFailure(err.response.data));
+    });
+};
+
+
 // like a scream
 const likeScreamRequest = () => {
   return {

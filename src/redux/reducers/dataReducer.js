@@ -7,7 +7,8 @@ import updateLikeCount from "./functions/updateLikeCount";
 
 const initialState = {
   screams: [],
-  scream: {}
+  scream: {},
+  dataErrors: {}
 };
 
 export default function(state = initialState, action) {
@@ -21,24 +22,37 @@ export default function(state = initialState, action) {
     case ActionTypes.UNLIKE_SCREAM_SUCCESS:
       return {
         screams: updateLikeCount(state.screams, action.scream),
-        scream: state.scream.screamId === action.scream.screamId ? action.scream : state.scream
+        scream:
+          state.scream.screamId === action.scream.screamId
+            ? action.scream
+            : state.scream
       };
 
     case ActionTypes.DELETE_SCREAM_SUCCESS:
       return {
         ...state,
         screams: state.screams.filter(s => s.screamId !== action.screamId)
-      }
+      };
 
+    case ActionTypes.POST_SCREAM_SUCCESS:
+      return {
+        ...state,
+        screams: [action.scream, ...state.screams]
+      };
+    case ActionTypes.POST_SCREAM_FAILURE:
+      return {
+        ...state,
+        dataErrors: action.err
+      };
     default:
       return state;
   }
 }
 
-// screams selectors
+// selectors
 export const dataStore = rootState => get(rootState, "data", {});
 
-// authSelector
+// screams selector
 export const screamsSelector = createSelector(
   dataStore,
   state => get(state, "screams", [])
@@ -50,8 +64,16 @@ export const singleScreamSelector = createSelector(
   state => get(state, "scream", {})
 );
 
+// error selector
+export const dataErrorsSelector = createSelector(
+  dataStore,
+  state => get(state, "dataErrors", {})
+);
 // loading status selector
-export const dataLoadingStatus = createLoadingSelector(["GET_SCREAMS"]);
+export const dataLoadingStatus = createLoadingSelector([
+  "GET_SCREAMS",
+  "POST_SCREAM"
+]);
 
 // error status selector
 export const dataErrorStatus = createErrorSelector([
