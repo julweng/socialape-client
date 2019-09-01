@@ -44,6 +44,11 @@ export default function(state = initialState, action) {
         ...state,
         dataErrors: action.err
       };
+    case ActionTypes.GET_SCREAM_SUCCESS:
+      return {
+        ...state,
+        scream: action.scream
+      };
     default:
       return state;
   }
@@ -72,12 +77,14 @@ export const dataErrorsSelector = createSelector(
 // loading status selector
 export const dataLoadingStatus = createLoadingSelector([
   "GET_SCREAMS",
-  "POST_SCREAM"
+  "POST_SCREAM",
+  "GET_SCREAM"
 ]);
 
 // error status selector
 export const dataErrorStatus = createErrorSelector([
   "GET_SCREAMS",
   "UNLIKE_SCREAMS",
-  "LIKE_SCREAMS"
+  "LIKE_SCREAMS",
+  "GET_SCREAM"
 ]);

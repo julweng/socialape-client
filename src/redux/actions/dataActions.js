@@ -67,7 +67,6 @@ export const postScream = newScream => dispatch => {
     });
 };
 
-
 // like a scream
 const likeScreamRequest = () => {
   return {
@@ -163,5 +162,37 @@ export const deleteScream = screamId => dispatch => {
     .catch(err => {
       console.log(err.response.data);
       dispatch(deleteScreamFailure());
+    });
+};
+
+// get one scream
+const getScreamRequest = () => {
+  return {
+    type: ActionTypes.GET_SCREAM_REQUEST
+  };
+};
+
+const getScreamSuccess = scream => {
+  return {
+    type: ActionTypes.GET_SCREAM_SUCCESS,
+    scream
+  };
+};
+
+const getScreamFailure = err => {
+  return {
+    type: ActionTypes.GET_SCREAM_FAILURE,
+    err
+  };
+};
+
+export const getScream = screamId => dispatch => {
+  dispatch(getScreamRequest());
+  axios
+    .get(`/scream/${screamId}`)
+    .then(res => dispatch(getScreamSuccess(res.data)))
+    .catch(err => {
+      console.log(err.response.data);
+      dispatch(getScreamFailure(err));
     });
 };
