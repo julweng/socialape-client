@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import jwtDecode from "jwt-decode";
 import { Provider } from "react-redux";
 // material UI
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
-import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+
 // redux
 import store from "./redux/store";
 import { logoutUser, reAuthenticateUser } from "./redux/actions";
