@@ -22,6 +22,7 @@ export default function errorStore(state = defaultState, action) {
     const busyIdsArray = busyIds || [busyId]
     const idsErrorState = state[requestName] ? { ...state[requestName] } : {}
 
+    // eslint-disable-next-line no-unused-vars
     for (const id of busyIdsArray) {
       idsErrorState[id] = hasError
     }

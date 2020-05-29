@@ -22,6 +22,7 @@ export default function loadingReducer(state = defaultState, action) {
     const busyIdsArray = busyIds || [busyId]
     const idsLoadingState = state[requestName] ? { ...state[requestName] } : {}
 
+    // eslint-disable-next-line no-unused-vars
     for (const id of busyIdsArray) {
       idsLoadingState[id] = isLoading
     }
