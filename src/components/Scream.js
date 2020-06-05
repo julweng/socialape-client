@@ -1,47 +1,47 @@
-import React from "react";
-import { shape, string, arrayOf, bool, number } from "prop-types";
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import React, {useState} from 'react';
+import {shape, string, arrayOf, bool, number} from 'prop-types';
+import {Link} from 'react-router-dom';
+import {useSelector} from 'react-redux';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 // material UI
-import Card from "@material-ui/core/Card";
-import CardMedia from "@material-ui/core/CardMedia";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import withStyles from "@material-ui/core/styles/withStyles";
-import ChatIcon from "@material-ui/icons/Chat";
+import Card from '@material-ui/core/Card';
+import CardMedia from '@material-ui/core/CardMedia';
+import CardContent from '@material-ui/core/CardContent';
+import ChatIcon from '@material-ui/icons/Chat';
+import Typography from '@material-ui/core/Typography';
+import UnfoldMore from '@material-ui/icons/UnfoldMore';
+import withStyles from '@material-ui/core/styles/withStyles';
 // redux
-import {
-  likesSelector,
-  credentialsSelector
-} from "../redux/reducers/selectors";
+import {credentialsSelector, likesSelector} from '../redux/reducers/selectors';
 // components
-import CommonButton from "../util/commonButton";
-import DeleteScream from "./DeleteScream";
-import ScreamDialog from "./ScreamDialog";
-import LikeButton from "./LikeButton";
+import CommonButton from '../util/commonButton';
+import LikeButton from './LikeButton';
+import DeleteScream from './DeleteScream';
+import ScreamDialog from './ScreamDialog';
 
 const styles = {
   card: {
-    position: "relative",
-    display: "flex",
-    marginBottom: 20
+    position: 'relative',
+    display: 'flex',
+    marginBottom: 20,
   },
   image: {
-    minWidth: 200
+    minWidth: 200,
   },
   content: {
     padding: 25,
-    objectFit: "cover"
-  }
+    objectFit: 'cover',
+  },
+  expandButton: {
+    position: 'absolute',
+    left: '90%',
+  },
 };
 
 const Scream = ({
   classes,
   authenticated,
-  credentials: { handle },
-  likes,
   scream,
   scream: {
     body,
@@ -50,10 +50,36 @@ const Scream = ({
     likeCount,
     screamId,
     userHandle,
-    userImage
-  }
+    userImage,
+  },
 }) => {
   dayjs.extend(relativeTime);
+
+  const [open, setOpen] = useState(false);
+
+  const [oldPath, setOldPath] = useState(window.location.pathname);
+
+  const [newPath, setNewPath] = useState('');
+
+  const {handle} = useSelector((state) => credentialsSelector(state));
+
+  const likes = useSelector((state) => likesSelector(state));
+
+  const handleOpen = () => {
+    setNewPath(`/users/${userHandle}/scream/${screamId}`);
+
+    if (oldPath === newPath) {
+      setOldPath(`/users/${userHandle}`);
+    }
+    setOpen(true);
+
+    window.history.pushState(null, null, newPath);
+  };
+
+  const handleClose = () => {
+    window.history.pushState(null, null, oldPath);
+    setOpen(false);
+  };
 
   const deleteButton =
     authenticated && userHandle === handle ? (
@@ -86,7 +112,19 @@ const Scream = ({
           <ChatIcon color="primary" />
         </CommonButton>
         <span>{commentCount} Comments</span>
-        <ScreamDialog scream={scream} likes={likes} />
+        <CommonButton
+          onClick={handleOpen}
+          tip="Expand scream"
+          tipClassName={classes.expandButton}
+        >
+          <UnfoldMore color="primary" />
+        </CommonButton>
+        <ScreamDialog
+          scream={scream}
+          likes={likes}
+          handleClose={handleClose}
+          open={open}
+        />
       </CardContent>
     </Card>
   );
@@ -96,7 +134,7 @@ Scream.propTypes = {
   classes: shape({
     card: string,
     image: string,
-    content: string
+    content: string,
   }).isRequired,
   body: string,
   createdAt: string,
@@ -109,16 +147,8 @@ Scream.propTypes = {
   authenticated: bool,
   likes: arrayOf(shape({})),
   credentials: shape({
-    handle: string
-  })
+    handle: string,
+  }),
 };
 
-const mapStateToProps = state => ({
-  credentials: credentialsSelector(state),
-  likes: likesSelector(state)
-});
-
-export default connect(
-  mapStateToProps,
-  null
-)(withStyles(styles)(Scream));
+export default withStyles(styles)(Scream);

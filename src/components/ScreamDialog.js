@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect} from 'react';
 import {shape, bool, string, arrayOf} from 'prop-types';
 import {useSelector, useDispatch} from 'react-redux';
 import dayjs from 'dayjs';
@@ -12,7 +12,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CloseIcon from '@material-ui/icons/Close';
-import UnfoldMore from '@material-ui/icons/UnfoldMore';
+
 import ChatIcon from '@material-ui/icons/Chat';
 // redux
 import {getScream} from '../redux/actions';
@@ -44,10 +44,6 @@ const styles = (theme) => ({
     left: '90%',
     top: '5%',
   },
-  expandButton: {
-    position: 'absolute',
-    left: '90%',
-  },
   spinnerDiv: {
     textAlign: 'center',
     marginTop: 50,
@@ -57,49 +53,37 @@ const styles = (theme) => ({
 
 const ScreamDialog = ({
   classes,
+  handleClose,
   likes,
+  open,
   scream: {
     body,
-    createdAt,
     commentCount,
+    createdAt,
+    likeCount,
     screamId,
     userHandle,
     userImage,
-    likeCount,
   },
 }) => {
   const dispatch = useDispatch();
-
-  const [open, setOpen] = useState(false);
-
-  const [oldPath, setOldPath] = useState(window.location.pathname);
-
-  const [newPath, setNewPath] = useState('')
-
-  const handleOpen = () => { 
-    setNewPath(`/users/${userHandle}/scream/${screamId}`);
-
-    if(oldPath === newPath) {
-      setOldPath(`/users/${userHandle}`);
-    }
-
-    setOpen(true);
-
-    window.history.pushState(null, null, newPath);
-    
-    dispatch(getScream(screamId));
-  }
-
-  const handleClose = () => {
-    window.history.pushState(null, null, oldPath);
-    setOpen(false);
-  }
-
-  const handleClick = () => dispatch(getScream(screamId));
-
-  // const singleScream = useSelector((state) => singleScreamSelector(state));
   
-  const renderDialog = open ? (
+  const loading = useSelector((state) => dataLoadingStatus(state));
+
+  const singleScream = useSelector((state) => singleScreamSelector(state));
+  
+  useEffect(() => {
+    const isSingleScreamEmpty = Object.keys(singleScream).length === 0
+    
+    if (isSingleScreamEmpty) {
+      dispatch(getScream(screamId));
+    }
+    
+  }, [dispatch, screamId, singleScream]);
+
+  const {comments} = singleScream
+
+  const dialogMarkup = loading ? (
     <div className={classes.spinnerDiv}>
       <CircularProgress size={100} thickness={2} />
     </div>
@@ -125,7 +109,7 @@ const ScreamDialog = ({
         <Typography variant="body1">{body}</Typography>
         <LikeButton screamId={screamId} likes={likes} />
         <span>{likeCount} Likes</span>
-        <CommonButton tip="comments" onClick={handleClick}>
+        <CommonButton tip="comments">
           <ChatIcon color="primary" />
         </CommonButton>
         <span>{commentCount} Comments</span>
@@ -134,27 +118,18 @@ const ScreamDialog = ({
   );
 
   return (
-    <>
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <CommonButton
-        onClick={handleOpen}
-        tip="Expand scream"
-        tipClassName={classes.expandButton}
+        tip="Close"
+        onClick={handleClose}
+        tipClassName={classes.closeButton}
       >
-        <UnfoldMore color="primary" />
+        <CloseIcon />
       </CommonButton>
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <CommonButton
-          tip="Close"
-          onClick={handleClose}
-          tipClassName={classes.closeButton}
-        >
-          <CloseIcon />
-        </CommonButton>
-        <DialogContent className={classes.dialogContent}>
-          {renderDialog}
-        </DialogContent>
-      </Dialog>
-    </>
+      <DialogContent className={classes.dialogContent}>
+        {dialogMarkup}
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -165,7 +140,6 @@ ScreamDialog.propTypes = {
     invisibleSeparator: string,
     profileImage: string,
     closeButton: string,
-    expandButton: string,
     spinnerDiv: string,
   }).isRequired,
   likes: arrayOf(shape({})).isRequired,
