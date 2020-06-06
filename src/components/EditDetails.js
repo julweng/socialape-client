@@ -1,33 +1,36 @@
-import React, { useState } from "react";
-import { func, shape } from "prop-types";
-import { connect } from "react-redux";
+import React, {useState} from 'react';
+import {shape} from 'prop-types';
+import {useDispatch, useSelector} from 'react-redux';
 // material UI
-import withStyles from "@material-ui/core/styles/withStyles";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import EditIcon from "@material-ui/icons/Edit";
+import withStyles from '@material-ui/core/styles/withStyles';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import EditIcon from '@material-ui/icons/Edit';
 // action creators
-import { editUserDetails } from "../redux/actions";
+import {editUserDetails} from '../redux/actions';
 // selectors
-import { userStore } from "../redux/reducers/selectors";
+import {credentialsSelector} from '../redux/reducers/selectors';
 // components
-import CommonButton from "../util/commonButton";
+import CommonButton from '../util/commonButton';
 
-const styles = theme => ({
+const styles = (theme) => ({
   ...theme.styles,
   button: {
-    float: "right"
-  }
+    float: 'right',
+  },
 });
 
-const EditDetails = ({ classes, credentials, editUserDetails }) => {
-  const userBio = credentials.bio || "";
-  const userWebsite = credentials.website || "";
-  const userLocation = credentials.location || "";
+const EditDetails = ({classes}) => {
+  const dispatch = useDispatch();
+  const credentials = useSelector((state) => credentialsSelector(state));
+
+  const userBio = credentials.bio || '';
+  const userWebsite = credentials.website || '';
+  const userLocation = credentials.location || '';
 
   const [bio, setBio] = useState(userBio);
   const [website, setWebsite] = useState(userWebsite);
@@ -38,15 +41,15 @@ const EditDetails = ({ classes, credentials, editUserDetails }) => {
 
   const handleClose = () => setOpen(false);
 
-  const onChange = ev => {
-    const { name, value } = ev.target;
-    if (name === "bio") {
+  const onChange = (ev) => {
+    const {name, value} = ev.target;
+    if (name === 'bio') {
       setBio(value);
     }
-    if (name === "website") {
+    if (name === 'website') {
       setWebsite(value);
     }
-    if (name === "location") {
+    if (name === 'location') {
       setLocation(value);
     }
   };
@@ -55,9 +58,9 @@ const EditDetails = ({ classes, credentials, editUserDetails }) => {
     const userDetails = {
       bio,
       website,
-      location
+      location,
     };
-    editUserDetails(userDetails);
+    dispatch(editUserDetails(userDetails));
     handleClose();
   };
 
@@ -123,14 +126,6 @@ const EditDetails = ({ classes, credentials, editUserDetails }) => {
 
 EditDetails.propTypes = {
   classes: shape({}).isRequired,
-  editUserDetails: func.isRequired
 };
 
-const mapStateToProps = state => ({
-  credentials: userStore(state).credentials
-});
-
-export default connect(
-  mapStateToProps,
-  { editUserDetails }
-)(withStyles(styles)(EditDetails));
+export default withStyles(styles)(EditDetails);

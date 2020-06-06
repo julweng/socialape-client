@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {shape, string, arrayOf, bool, number} from 'prop-types';
+import {shape, string, arrayOf, number} from 'prop-types';
 import {Link} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import dayjs from 'dayjs';
@@ -13,7 +13,11 @@ import Typography from '@material-ui/core/Typography';
 import UnfoldMore from '@material-ui/icons/UnfoldMore';
 import withStyles from '@material-ui/core/styles/withStyles';
 // redux
-import {credentialsSelector, likesSelector} from '../redux/reducers/selectors';
+import {
+  authSelector,
+  credentialsSelector,
+  likesSelector,
+} from '../redux/reducers/selectors';
 // components
 import CommonButton from '../util/commonButton';
 import LikeButton from './LikeButton';
@@ -41,7 +45,6 @@ const styles = {
 
 const Scream = ({
   classes,
-  authenticated,
   scream,
   scream: {
     body,
@@ -64,6 +67,8 @@ const Scream = ({
   const {handle} = useSelector((state) => credentialsSelector(state));
 
   const likes = useSelector((state) => likesSelector(state));
+
+  const authenticated = useSelector((state) => authSelector(state));
 
   const handleOpen = () => {
     setNewPath(`/users/${userHandle}/scream/${screamId}`);
@@ -144,7 +149,6 @@ Scream.propTypes = {
   userHandle: string,
   userImage: string,
   scream: shape({}),
-  authenticated: bool,
   likes: arrayOf(shape({})),
   credentials: shape({
     handle: string,

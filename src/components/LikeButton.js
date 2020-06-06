@@ -1,30 +1,28 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { shape, bool, string, func, arrayOf } from "prop-types";
+import React from 'react';
+import {Link} from 'react-router-dom';
+import {useSelector, useDispatch} from 'react-redux';
+import {shape, string, arrayOf} from 'prop-types';
 // material UI
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 // components
-import CommonButton from "../util/commonButton";
+import CommonButton from '../util/commonButton';
 // redux
-import { likeScream, unlikeScream } from "../redux/actions";
-import { authSelector } from "../redux/reducers/selectors";
+import {likeScream, unlikeScream} from '../redux/actions';
+import {authSelector} from '../redux/reducers/selectors';
 // helper
-import isScreamLiked from "./functions/isScreamLiked";
+import isScreamLiked from './functions/isScreamLiked';
 
-const LikeButton = ({
-  authenticated,
-  screamId,
-  likes,
-  likeScream,
-  unlikeScream
-}) => {
-  const screamHasBeenLiked = isScreamLiked(likes, screamId)
+const LikeButton = ({likes, screamId}) => {
+  const dispatch = useDispatch();
 
-  const handleLikeScream = () => likeScream(screamId);
+  const screamHasBeenLiked = isScreamLiked(likes, screamId);
 
-  const handleUnlikeScream = () => unlikeScream(screamId);
+  const handleLikeScream = () => dispatch(likeScream(screamId));
+
+  const handleUnlikeScream = () => dispatch(unlikeScream(screamId));
+
+  const authenticated = useSelector((state) => authSelector(state));
 
   return (
     <>
@@ -48,22 +46,8 @@ const LikeButton = ({
 };
 
 LikeButton.propTypes = {
-  authenticated: bool.isRequired,
   screamId: string.isRequired,
-  likeScream: func.isRequired,
-  unlikeScream: func.isRequired,
-  likes: arrayOf(shape({})).isRequired
-};
-const mapStateToProps = state => ({
-  authenticated: authSelector(state)
-});
-
-const mapDispatchToProps = {
-  likeScream,
-  unlikeScream
+  likes: arrayOf(shape({})).isRequired,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LikeButton);
+export default LikeButton;

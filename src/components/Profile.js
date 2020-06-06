@@ -1,105 +1,110 @@
-import React, { useEffect } from "react";
-import { connect } from "react-redux";
-import { shape, bool, func } from "prop-types";
-import { Link } from "react-router-dom";
-import dayjs from "dayjs";
+import React, {useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import {shape} from 'prop-types';
+import {Link} from 'react-router-dom';
+import dayjs from 'dayjs';
 // material UI
-import withStyles from "@material-ui/core/styles/withStyles";
-import Paper from "@material-ui/core/Paper";
-import MuiLink from "@material-ui/core/Link";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import LocationOn from "@material-ui/icons/LocationOn";
-import LinkIcon from "@material-ui/icons/Link";
-import CalendarToday from "@material-ui/icons/CalendarToday";
-import EditIcon from "@material-ui/icons/Edit";
-import KeyboardReturn from "@material-ui/icons/KeyboardReturn";
+import withStyles from '@material-ui/core/styles/withStyles';
+import Paper from '@material-ui/core/Paper';
+import MuiLink from '@material-ui/core/Link';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import LocationOn from '@material-ui/icons/LocationOn';
+import LinkIcon from '@material-ui/icons/Link';
+import CalendarToday from '@material-ui/icons/CalendarToday';
+import EditIcon from '@material-ui/icons/Edit';
+import KeyboardReturn from '@material-ui/icons/KeyboardReturn';
 // component
-import EditDetails from "./EditDetails";
-import CommonButton from "../util/commonButton";
+import EditDetails from './EditDetails';
+import CommonButton from '../util/commonButton';
 // action creators
-import { getUser, uploadImage, logoutUser } from "../redux/actions";
+import {getUser, uploadImage, logoutUser} from '../redux/actions';
 // selectors
 import {
   credentialsSelector,
   authSelector,
-  userLoadingStatus
-} from "../redux/reducers/selectors";
+  userLoadingStatus,
+} from '../redux/reducers/selectors';
 
-const styles = theme => ({
+const styles = (theme) => ({
   paper: {
-    padding: 20
+    padding: 20,
   },
   profile: {
-    "& .image-wrapper": {
-      textAlign: "center",
-      position: "relative",
-      "& button": {
-        position: "absolute",
-        top: "80%",
-        left: "70%"
-      }
+    '& .image-wrapper': {
+      textAlign: 'center',
+      position: 'relative',
+      '& button': {
+        position: 'absolute',
+        top: '80%',
+        left: '70%',
+      },
     },
-    "& .profile-image": {
+    '& .profile-image': {
       width: 200,
       height: 200,
-      objectFit: "cover",
-      maxWidth: "100%",
-      borderRadius: "50%"
+      objectFit: 'cover',
+      maxWidth: '100%',
+      borderRadius: '50%',
     },
-    "& .profile-details": {
-      textAlign: "center",
-      "& span, svg": {
-        verticalAlign: "middle"
+    '& .profile-details': {
+      textAlign: 'center',
+      '& span, svg': {
+        verticalAlign: 'middle',
       },
-      "& a": {
-        color: theme.palette.primary.main
-      }
+      '& a': {
+        color: theme.palette.primary.main,
+      },
     },
-    "& hr": {
-      border: "none",
-      margin: "0 0 10px 0"
+    '& hr': {
+      border: 'none',
+      margin: '0 0 10px 0',
     },
-    "& svg.button": {
-      "&:hover": {
-        cursor: "pointer"
-      }
-    }
+    '& svg.button': {
+      '&:hover': {
+        cursor: 'pointer',
+      },
+    },
   },
   buttons: {
-    textAlign: "center",
-    "& a": {
-      margin: "20px 10px"
-    }
-  }
+    textAlign: 'center',
+    '& a': {
+      margin: '20px 10px',
+    },
+  },
 });
 
-const Profile = ({
-  classes,
-  getUser,
-  uploadImage,
-  logoutUser,
-  loading,
-  authenticated,
-  credentials: { bio, createdAt, handle, imageUrl, location, website }
-} = {}) => {
+const Profile = ({classes} = {}) => {
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    getUser();
-  }, [getUser]);
+    dispatch(getUser());
+  }, [dispatch]);
+
+  const authenticated = useSelector((state) => authSelector(state));
+  const {
+    bio,
+    createdAt,
+    handle,
+    imageUrl,
+    location,
+    website,
+  } = useSelector((state) => credentialsSelector(state));
+  const loading = useSelector((state) => userLoadingStatus(state));
 
   const handleEditPicture = () => {
-    const fileInput = document.getElementById("image-upload");
+    const fileInput = document.getElementById('image-upload');
     fileInput.click();
   };
 
-  const handleImageChange = ev => {
+  const handleImageChange = (ev) => {
     const image = ev.target.files[0];
     const formData = new FormData();
-    formData.append("image", image, image.name);
-    uploadImage(formData);
+    formData.append('image', image, image.name);
+    dispatch(uploadImage(formData));
   };
 
-  const handleLogout = () => logoutUser();
+  const handleLogout = () => dispatch(logoutUser());
 
   const profileMarkup = !loading ? (
     authenticated ? (
@@ -145,13 +150,13 @@ const Profile = ({
               <>
                 <LinkIcon color="primary" />
                 <a href={website} target="_blank" rel="noopener noreferrer">
-                  {" "}
+                  {' '}
                   {website}
                 </a>
               </>
             )}
-            <CalendarToday color="primary" />{" "}
-            <span>Joined {dayjs(createdAt).format("MMM YYYY")}</span>
+            <CalendarToday color="primary" />{' '}
+            <span>Joined {dayjs(createdAt).format('MMM YYYY')}</span>
           </div>
           <CommonButton tip="Logout" onClick={handleLogout}>
             <KeyboardReturn color="primary" />
@@ -192,27 +197,6 @@ const Profile = ({
 
 Profile.propTypes = {
   classes: shape({}).isRequired,
-  authenticated: bool.isRequired,
-  credentials: shape({}).isRequired,
-  loading: bool,
-  getUser: func.isRequired,
-  uploadImage: func.isRequired,
-  logoutUser: func.isRequired
 };
 
-const mapStateToProps = state => ({
-  authenticated: authSelector(state),
-  credentials: credentialsSelector(state),
-  loading: userLoadingStatus(state)
-});
-
-const mapDispatchToProps = {
-  getUser,
-  logoutUser,
-  uploadImage
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(Profile));
+export default withStyles(styles)(Profile);
