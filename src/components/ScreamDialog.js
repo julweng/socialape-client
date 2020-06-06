@@ -21,6 +21,7 @@ import {
   singleScreamSelector,
 } from '../redux/reducers/selectors';
 // components
+import Comments from './Comments';
 import CommonButton from '../util/commonButton';
 import LikeButton from './LikeButton';
 
@@ -113,6 +114,7 @@ const ScreamDialog = ({
           <ChatIcon color="primary" />
         </CommonButton>
         <span>{commentCount} Comments</span>
+        <Comments comments={comments} />
       </Grid>
     </Grid>
   );
