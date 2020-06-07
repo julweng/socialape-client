@@ -1,34 +1,34 @@
-import ActionTypes from "../types";
-import axios from "axios";
+import ActionTypes from '../types';
+import axios from 'axios';
 
 // get screams
 const getScreamsRequest = () => {
   return {
-    type: ActionTypes.GET_SCREAMS_REQUEST
+    type: ActionTypes.GET_SCREAMS_REQUEST,
   };
 };
 
-const getScreamsSuccess = screams => {
+const getScreamsSuccess = (screams) => {
   return {
     type: ActionTypes.GET_SCREAMS_SUCCESS,
-    screams
+    screams,
   };
 };
 
-const getScreamsFailure = err => {
+const getScreamsFailure = (err) => {
   return {
     type: ActionTypes.GET_SCREAMS_FAILURE,
-    err
+    err,
   };
 };
 
-export const getScreams = () => dispatch => {
+export const getScreams = () => (dispatch) => {
   dispatch(getScreamsRequest());
   axios
-    .get("/screams")
-    .then(res => dispatch(getScreamsSuccess(res.data)))
+    .get('/screams')
+    .then((res) => dispatch(getScreamsSuccess(res.data)))
 
-    .catch(err => {
+    .catch((err) => {
       console.log(err.response.data);
       dispatch(getScreamsFailure(err.response.data));
     });
@@ -37,31 +37,31 @@ export const getScreams = () => dispatch => {
 // post a scream
 const postScreamRequest = () => {
   return {
-    type: ActionTypes.POST_SCREAM_REQUEST
+    type: ActionTypes.POST_SCREAM_REQUEST,
   };
 };
 
-const postScreamSuccess = scream => {
+const postScreamSuccess = (scream) => {
   return {
     type: ActionTypes.POST_SCREAM_SUCCESS,
-    scream
+    scream,
   };
 };
 
-const postScreamFailure = err => {
+const postScreamFailure = (err) => {
   return {
     type: ActionTypes.POST_SCREAM_FAILURE,
-    err
+    err,
   };
 };
 
-export const postScream = newScream => dispatch => {
+export const postScream = (newScream) => (dispatch) => {
   dispatch(postScreamRequest());
   axios
-    .post("/scream", newScream)
-    .then(res => dispatch(postScreamSuccess(res.data)))
+    .post('/scream', newScream)
+    .then((res) => dispatch(postScreamSuccess(res.data)))
 
-    .catch(err => {
+    .catch((err) => {
       console.log(err.response.data);
       dispatch(postScreamFailure(err.response.data));
     });
@@ -70,31 +70,31 @@ export const postScream = newScream => dispatch => {
 // like a scream
 const likeScreamRequest = () => {
   return {
-    type: ActionTypes.LIKE_SCREAM_REQUEST
+    type: ActionTypes.LIKE_SCREAM_REQUEST,
   };
 };
 
-const likeScreamSuccess = scream => {
+const likeScreamSuccess = (scream) => {
   return {
     type: ActionTypes.LIKE_SCREAM_SUCCESS,
-    scream
+    scream,
   };
 };
 
-const likeScreamFailure = err => {
+const likeScreamFailure = (err) => {
   return {
     type: ActionTypes.LIKE_SCREAM_FAILURE,
-    err
+    err,
   };
 };
 
-export const likeScream = screamId => dispatch => {
+export const likeScream = (screamId) => (dispatch) => {
   dispatch(likeScreamRequest());
   axios
     .get(`/scream/${screamId}/like`)
-    .then(res => dispatch(likeScreamSuccess(res.data)))
+    .then((res) => dispatch(likeScreamSuccess(res.data)))
 
-    .catch(err => {
+    .catch((err) => {
       console.log(err.response.data);
       dispatch(likeScreamFailure(err.response.data));
     });
@@ -103,31 +103,31 @@ export const likeScream = screamId => dispatch => {
 // unlike a scream
 const unlikeScreamRequest = () => {
   return {
-    type: ActionTypes.UNLIKE_SCREAM_REQUEST
+    type: ActionTypes.UNLIKE_SCREAM_REQUEST,
   };
 };
 
-const unlikeScreamSuccess = scream => {
+const unlikeScreamSuccess = (scream) => {
   return {
     type: ActionTypes.UNLIKE_SCREAM_SUCCESS,
-    scream
+    scream,
   };
 };
 
-const unlikeScreamFailure = err => {
+const unlikeScreamFailure = (err) => {
   return {
     type: ActionTypes.UNLIKE_SCREAM_FAILURE,
-    err
+    err,
   };
 };
 
-export const unlikeScream = screamId => dispatch => {
+export const unlikeScream = (screamId) => (dispatch) => {
   dispatch(unlikeScreamRequest());
   axios
     .get(`/scream/${screamId}/unlike`)
-    .then(res => dispatch(unlikeScreamSuccess(res.data)))
+    .then((res) => dispatch(unlikeScreamSuccess(res.data)))
 
-    .catch(err => {
+    .catch((err) => {
       console.log(err.response.data);
       dispatch(unlikeScreamFailure(err.response.data));
     });
@@ -136,30 +136,30 @@ export const unlikeScream = screamId => dispatch => {
 // delete a scream
 const deleteScreamRequest = () => {
   return {
-    type: ActionTypes.DELETE_SCREAM_REQUEST
+    type: ActionTypes.DELETE_SCREAM_REQUEST,
   };
 };
 
-const deleteScreamSuccess = screamId => {
+const deleteScreamSuccess = (screamId) => {
   return {
     type: ActionTypes.DELETE_SCREAM_SUCCESS,
-    screamId
+    screamId,
   };
 };
 
-const deleteScreamFailure = err => {
+const deleteScreamFailure = (err) => {
   return {
     type: ActionTypes.DELETE_SCREAM_FAILURE,
-    err
+    err,
   };
 };
 
-export const deleteScream = screamId => dispatch => {
+export const deleteScream = (screamId) => (dispatch) => {
   dispatch(deleteScreamRequest());
   axios
     .delete(`/scream/${screamId}`)
     .then(() => dispatch(deleteScreamSuccess(screamId)))
-    .catch(err => {
+    .catch((err) => {
       console.log(err.response.data);
       dispatch(deleteScreamFailure());
     });
@@ -168,31 +168,64 @@ export const deleteScream = screamId => dispatch => {
 // get one scream
 const getScreamRequest = () => {
   return {
-    type: ActionTypes.GET_SCREAM_REQUEST
+    type: ActionTypes.GET_SCREAM_REQUEST,
   };
 };
 
-const getScreamSuccess = scream => {
+const getScreamSuccess = (scream) => {
   return {
     type: ActionTypes.GET_SCREAM_SUCCESS,
-    scream
+    scream,
   };
 };
 
-const getScreamFailure = err => {
+const getScreamFailure = (err) => {
   return {
     type: ActionTypes.GET_SCREAM_FAILURE,
-    err
+    err,
   };
 };
 
-export const getScream = screamId => dispatch => {
+export const getScream = (screamId) => (dispatch) => {
   dispatch(getScreamRequest());
   axios
     .get(`/scream/${screamId}`)
-    .then(res => dispatch(getScreamSuccess(res.data)))
-    .catch(err => {
+    .then((res) => dispatch(getScreamSuccess(res.data)))
+    .catch((err) => {
       console.log(err.response.data);
       dispatch(getScreamFailure(err));
+    });
+};
+
+// submit comment
+const submitCommentRequest = () => {
+  return {
+    type: ActionTypes.SUBMIT_COMMENT,
+  };
+};
+
+const submitCommentSuccess = (res) => {
+  return {
+    type: ActionTypes.SUBMIT_COMMENT_SUCCESS,
+    data: res.data,
+  };
+};
+
+const submitCommentFailure = (err) => {
+  return {
+    type: ActionTypes.SUBMIT_COMMENT_FAILURE,
+    err: err.response.data,
+  };
+};
+
+export const submitComment = (screamId, commentData) => (dispatch) => {
+  dispatch(submitCommentRequest());
+  axios
+    .post(`/scream/${screamId}/comment`, commentData)
+    .then((res) => {
+      dispatch(submitCommentSuccess(res));
+    })
+    .catch((err) => {
+      dispatch(submitCommentFailure(err));
     });
 };
