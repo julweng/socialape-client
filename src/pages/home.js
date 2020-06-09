@@ -1,40 +1,48 @@
-import React, {useEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-// material UI
+import React, { Component } from 'react';
 import Grid from '@material-ui/core/Grid';
-// components
-import Scream from '../components/Scream';
-import Profile from '../components/Profile';
-// redux
-import {getScreams} from '../redux/actions';
-import {dataStore, dataLoadingSelector} from '../redux/reducers/selectors';
+import PropTypes from 'prop-types';
 
-const Home = () => {
-  const dispatch = useDispatch();
-  const {screams} = useSelector((state) => dataStore(state));
-  const loading = useSelector((state) => dataLoadingSelector(state));
+import Scream from '../components/scream/Scream';
+import Profile from '../components/profile/Profile';
+import ScreamSkeleton from '../util/ScreamSkeleton';
 
-  useEffect(() => {
-    dispatch(getScreams());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+import { connect } from 'react-redux';
+import { getScreams } from '../redux/actions/dataActions';
 
-  const recentScreams = !loading ? (
-    screams.map((s) => <Scream key={s.screamId} scream={s} />)
-  ) : (
-    <p>Loading...</p>
-  );
-
-  return (
-    <Grid container spacing={10}>
-      <Grid item sm={8} xs={12}>
-        {recentScreams}
+class home extends Component {
+  componentDidMount() {
+    this.props.getScreams();
+  }
+  render() {
+    const { screams, loading } = this.props.data;
+    let recentScreamsMarkup = !loading ? (
+      screams.map((scream) => <Scream key={scream.screamId} scream={scream} />)
+    ) : (
+      <ScreamSkeleton />
+    );
+    return (
+      <Grid container spacing={16}>
+        <Grid item sm={8} xs={12}>
+          {recentScreamsMarkup}
+        </Grid>
+        <Grid item sm={4} xs={12}>
+          <Profile />
+        </Grid>
       </Grid>
-      <Grid item sm={4} xs={12}>
-        <Profile />
-      </Grid>
-    </Grid>
-  );
+    );
+  }
+}
+
+home.propTypes = {
+  getScreams: PropTypes.func.isRequired,
+  data: PropTypes.object.isRequired
 };
 
-export default Home;
+const mapStateToProps = (state) => ({
+  data: state.data
+});
+
+export default connect(
+  mapStateToProps,
+  { getScreams }
+)(home);
