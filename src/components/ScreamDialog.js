@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {shape, bool, string, arrayOf} from 'prop-types';
 import {useSelector, useDispatch} from 'react-redux';
 import dayjs from 'dayjs';
+import {isEmpty} from 'lodash';
 import {Link} from 'react-router-dom';
 // material UI
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -16,12 +17,10 @@ import CloseIcon from '@material-ui/icons/Close';
 import ChatIcon from '@material-ui/icons/Chat';
 // redux
 import {getScream} from '../redux/actions';
-import {
-  dataLoadingStatus,
-  singleScreamSelector,
-} from '../redux/reducers/selectors';
+import {commentsSelector, dataLoadingSelector} from '../redux/reducers/selectors';
 // components
 import Comments from './Comments';
+import CommentForm from './CommentForm';
 import CommonButton from '../util/commonButton';
 import LikeButton from './LikeButton';
 
@@ -53,7 +52,14 @@ const styles = (theme) => ({
 });
 
 const ScreamDialog = ({
-  classes,
+  classes: {
+    closeButton,
+    dialogContent,
+    invisibleSeparator,
+    profileImage,
+    spinnerDiv,
+    visibleSeparator,
+  },
   handleClose,
   likes,
   open,
@@ -68,30 +74,24 @@ const ScreamDialog = ({
   },
 }) => {
   const dispatch = useDispatch();
-  
-  const loading = useSelector((state) => dataLoadingStatus(state));
 
-  const singleScream = useSelector((state) => singleScreamSelector(state));
-  
+  const loading = useSelector((state) => dataLoadingSelector(state));
+console.log(loading)
+  const comments = useSelector((state) => commentsSelector(state));
+
   useEffect(() => {
-    const isSingleScreamEmpty = Object.keys(singleScream).length === 0
-    
-    if (isSingleScreamEmpty) {
+    if (!Array.isArray(comments) && isEmpty(comments))
       dispatch(getScream(screamId));
-    }
-    
-  }, [dispatch, screamId, singleScream]);
-
-  const {comments} = singleScream
+  }, [comments, dispatch, screamId]);
 
   const dialogMarkup = loading ? (
-    <div className={classes.spinnerDiv}>
+    <div className={spinnerDiv}>
       <CircularProgress size={100} thickness={2} />
     </div>
   ) : (
     <Grid container spacing={10}>
       <Grid item sm={3}>
-        <img src={userImage} alt="Profile" className={classes.profileImage} />
+        <img src={userImage} alt="Profile" className={profileImage} />
       </Grid>
       <Grid item sm={7}>
         <Typography
@@ -102,11 +102,11 @@ const ScreamDialog = ({
         >
           @{userHandle}
         </Typography>
-        <hr className={classes.invisibleSeparator} />
+        <hr className={invisibleSeparator} />
         <Typography variant="body2" color="textSecondary">
           {dayjs(createdAt).format('h:mm a, MMMM DD YYYY')}
         </Typography>
-        <hr className={classes.invisibleSeparator} />
+        <hr className={invisibleSeparator} />
         <Typography variant="body1">{body}</Typography>
         <LikeButton screamId={screamId} likes={likes} />
         <span>{likeCount} Likes</span>
@@ -114,7 +114,9 @@ const ScreamDialog = ({
           <ChatIcon color="primary" />
         </CommonButton>
         <span>{commentCount} Comments</span>
-        <Comments comments={comments} />
+        <hr className={visibleSeparator} />
+        <CommentForm screamId={screamId} />
+        <Comments comments={comments} screamId={screamId} />
       </Grid>
     </Grid>
   );
@@ -124,13 +126,11 @@ const ScreamDialog = ({
       <CommonButton
         tip="Close"
         onClick={handleClose}
-        tipClassName={classes.closeButton}
+        tipClassName={closeButton}
       >
         <CloseIcon />
       </CommonButton>
-      <DialogContent className={classes.dialogContent}>
-        {dialogMarkup}
-      </DialogContent>
+      <DialogContent className={dialogContent}>{dialogMarkup}</DialogContent>
     </Dialog>
   );
 };
@@ -140,9 +140,11 @@ ScreamDialog.propTypes = {
   loading: bool,
   classes: shape({
     invisibleSeparator: string,
+    visibleSeparator: string,
     profileImage: string,
     closeButton: string,
     spinnerDiv: string,
+    dialogContent: string
   }).isRequired,
   likes: arrayOf(shape({})).isRequired,
 };

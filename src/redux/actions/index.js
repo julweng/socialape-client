@@ -5,8 +5,8 @@ export {
   logoutUser,
   reAuthenticateUser,
   uploadImage,
-  editUserDetails
-} from "./userActions";
+  editUserDetails,
+} from './userActions';
 
 export {
   getScreams,
@@ -14,6 +14,7 @@ export {
   unlikeScream,
   deleteScream,
   postScream,
-  getScream
-} from "./dataActions"
-
+  getScream,
+  closeScream,
+  submitComment,
+} from './dataActions';

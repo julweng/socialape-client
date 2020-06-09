@@ -12,7 +12,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 // action creators
 import { signupUser } from "../redux/actions";
 // selectors
-import { userLoadingStatus, signupErrors } from "../redux/reducers/selectors";
+import { userLoadingSelector, signupErrors } from "../redux/reducers/selectors";
 // logo
 import AppIcon from "../images/icon.png";
 
@@ -140,7 +140,7 @@ Signup.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  loading: userLoadingStatus(state),
+  loading: userLoadingSelector(state),
   errors: signupErrors(state)
 });
 

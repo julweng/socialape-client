@@ -23,7 +23,7 @@ import {getUser, uploadImage, logoutUser} from '../redux/actions';
 import {
   credentialsSelector,
   authSelector,
-  userLoadingStatus,
+  userLoadingSelector,
 } from '../redux/reducers/selectors';
 
 const styles = (theme) => ({
@@ -90,7 +90,7 @@ const Profile = ({classes} = {}) => {
     location,
     website,
   } = useSelector((state) => credentialsSelector(state));
-  const loading = useSelector((state) => userLoadingStatus(state));
+  const loading = useSelector((state) => userLoadingSelector(state));
 
   const handleEditPicture = () => {
     const fileInput = document.getElementById('image-upload');

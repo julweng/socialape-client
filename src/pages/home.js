@@ -1,21 +1,26 @@
-import React, { useEffect } from "react";
-import { func, arrayOf, shape, bool } from "prop-types";
-import { connect } from "react-redux";
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 // material UI
-import Grid from "@material-ui/core/Grid";
+import Grid from '@material-ui/core/Grid';
 // components
-import Scream from "../components/Scream";
-import Profile from "../components/Profile";
+import Scream from '../components/Scream';
+import Profile from '../components/Profile';
 // redux
-import { getScreams } from "../redux/actions";
-import { dataStore, dataLoadingStatus } from "../redux/reducers/selectors";
+import {getScreams} from '../redux/actions';
+import {dataStore, dataLoadingSelector} from '../redux/reducers/selectors';
 
-const Home = ({ getScreams, data: { screams }, loading }) => {
+const Home = () => {
+  const dispatch = useDispatch();
+  const {screams} = useSelector((state) => dataStore(state));
+  const loading = useSelector((state) => dataLoadingSelector(state));
+
   useEffect(() => {
-    getScreams();
-  }, [getScreams]);
+    dispatch(getScreams());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const recentScreams = !loading ? (
-    screams.map(s => <Scream key={s.screamId} scream={s} />)
+    screams.map((s) => <Scream key={s.screamId} scream={s} />)
   ) : (
     <p>Loading...</p>
   );
@@ -32,20 +37,4 @@ const Home = ({ getScreams, data: { screams }, loading }) => {
   );
 };
 
-Home.propTypes = {
-  getScreams: func.isRequired,
-  data: shape({
-    screams: arrayOf(shape({}))
-  }).isRequired,
-  loading: bool.isRequired
-};
-
-const mapStateToProps = state => ({
-  data: dataStore(state),
-  loading: dataLoadingStatus(state)
-});
-
-export default connect(
-  mapStateToProps,
-  { getScreams }
-)(Home);
+export default Home;

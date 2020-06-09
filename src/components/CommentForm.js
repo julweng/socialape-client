@@ -9,9 +9,7 @@ import TextField from '@material-ui/core/TextField';
 import {useDispatch, useSelector} from 'react-redux';
 import {submitComment} from '../redux/actions/dataActions';
 import {
-  authSelector,
-  dataLoadingStatus,
-  dataErrorStatus,
+  authSelector
 } from '../redux/reducers/selectors';
 
 const styles = (theme) => ({...theme.styles});
@@ -22,19 +20,23 @@ const CommentForm = ({
 }) => {
   const dispatch = useDispatch();
   const [comment, setComment] = useState('');
+  const [commentError, setCommentError] = useState(false);
 
   const handleChange = (ev) => {
+    setCommentError(false);
     setComment(ev.target.value);
   };
 
   const handleSubmit = (ev) => {
     ev.preventDefault();
+    if (comment.trim().length === 0) {
+      setCommentError(true);
+    }
     dispatch(submitComment(screamId, {body: comment}));
     setComment('');
   };
 
   const authenticated = useSelector((state) => authSelector(state));
-  const hasError = useSelector((state) => dataErrorStatus(state));
 
   const renderCommentForm = authenticated ? (
     <Grid item sm={12} style={{textAlign: 'center'}}>
@@ -43,8 +45,8 @@ const CommentForm = ({
           name="body"
           type="text"
           label="Comment on scream"
-          error={hasError ? true : false}
-          helperText={hasError}
+          error={commentError}
+          helperText={commentError}
           value={comment}
           onChange={handleChange}
           fullWidth

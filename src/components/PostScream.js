@@ -15,7 +15,7 @@ import {postScream} from '../redux/actions';
 // selectors
 import {
   dataErrorsSelector,
-  dataLoadingStatus,
+  dataLoadingSelector,
 } from '../redux/reducers/selectors';
 // components
 import CommonButton from '../util/commonButton';
@@ -45,7 +45,7 @@ const PostScream = ({classes}) => {
   const [screamError, setScreamError] = useState('');
 
   const errors = useSelector((state) => dataErrorsSelector(state));
-  const loading = useSelector((state) => dataLoadingStatus(state));
+  const loading = useSelector((state) => dataLoadingSelector(state));
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => {

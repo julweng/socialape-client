@@ -4,8 +4,7 @@ export {
   authSelector,
   credentialsSelector,
   likesSelector,
-  userLoadingStatus,
-  userErrorStatus,
+  userLoadingSelector,
   authErrors,
   signupErrors
 } from "./userReducer"
@@ -14,8 +13,7 @@ export {
 export {
   dataStore,
   screamsSelector,
-  singleScreamSelector,
-  dataLoadingStatus,
-  dataErrorStatus,
-  dataErrorsSelector
+  dataLoadingSelector,
+  dataErrorsSelector,
+  commentsSelector
 } from "./dataReducer"

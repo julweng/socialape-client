@@ -29,7 +29,7 @@ export const getScreams = () => (dispatch) => {
     .then((res) => dispatch(getScreamsSuccess(res.data)))
 
     .catch((err) => {
-      console.log(err.response.data);
+      console.log(err);
       dispatch(getScreamsFailure(err.response.data));
     });
 };
@@ -62,7 +62,7 @@ export const postScream = (newScream) => (dispatch) => {
     .then((res) => dispatch(postScreamSuccess(res.data)))
 
     .catch((err) => {
-      console.log(err.response.data);
+      console.log(err);
       dispatch(postScreamFailure(err.response.data));
     });
 };
@@ -95,7 +95,7 @@ export const likeScream = (screamId) => (dispatch) => {
     .then((res) => dispatch(likeScreamSuccess(res.data)))
 
     .catch((err) => {
-      console.log(err.response.data);
+      console.log(err);
       dispatch(likeScreamFailure(err.response.data));
     });
 };
@@ -128,8 +128,8 @@ export const unlikeScream = (screamId) => (dispatch) => {
     .then((res) => dispatch(unlikeScreamSuccess(res.data)))
 
     .catch((err) => {
-      console.log(err.response.data);
-      dispatch(unlikeScreamFailure(err.response.data));
+      console.log(err);
+      dispatch(unlikeScreamFailure(err));
     });
 };
 
@@ -160,13 +160,14 @@ export const deleteScream = (screamId) => (dispatch) => {
     .delete(`/scream/${screamId}`)
     .then(() => dispatch(deleteScreamSuccess(screamId)))
     .catch((err) => {
-      console.log(err.response.data);
+      console.log(err);
       dispatch(deleteScreamFailure());
     });
 };
 
 // get one scream
 const getScreamRequest = () => {
+  console.log('get scream request')
   return {
     type: ActionTypes.GET_SCREAM_REQUEST,
   };
@@ -192,15 +193,22 @@ export const getScream = (screamId) => (dispatch) => {
     .get(`/scream/${screamId}`)
     .then((res) => dispatch(getScreamSuccess(res.data)))
     .catch((err) => {
-      console.log(err.response.data);
+      console.log(err);
       dispatch(getScreamFailure(err));
     });
+};
+
+// close scream
+export const closeScream = () => {
+  return {
+    type: ActionTypes.CLOSE_SCREAM,
+  };
 };
 
 // submit comment
 const submitCommentRequest = () => {
   return {
-    type: ActionTypes.SUBMIT_COMMENT,
+    type: ActionTypes.SUBMIT_COMMENT_REQUEST,
   };
 };
 
@@ -214,7 +222,7 @@ const submitCommentSuccess = (res) => {
 const submitCommentFailure = (err) => {
   return {
     type: ActionTypes.SUBMIT_COMMENT_FAILURE,
-    err: err.response.data,
+    err,
   };
 };
 
@@ -226,6 +234,7 @@ export const submitComment = (screamId, commentData) => (dispatch) => {
       dispatch(submitCommentSuccess(res));
     })
     .catch((err) => {
+      console.log('err')
       dispatch(submitCommentFailure(err));
     });
 };

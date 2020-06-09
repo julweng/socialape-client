@@ -1,5 +1,6 @@
 import React, {Fragment} from 'react';
-import {arrayOf, shape} from 'prop-types';
+import {arrayOf, shape, string} from 'prop-types';
+import {isEmpty} from 'lodash';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {Link} from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -23,12 +24,14 @@ const styles = (theme) => ({
 const Comments = ({
   classes: {commentImage, commentData, invisibleSeparator, visibleSeparator},
   comments,
+  screamId
 }) => {
   return (
     <Grid container>
-      {comments.map((comment, index) => {
-        const {body, createdAt, userImage, userHandle} = comment;
-        return (
+      {!isEmpty(comments) && comments.map((comment, index) => {
+        const {body, createdAt, userImage, userHandle, screamId: commentScreamId} = comment;  
+        if (commentScreamId === screamId) {
+          return (
           <Fragment key={createdAt}>
             <Grid item sm={12}>
               <Grid container>
@@ -58,7 +61,9 @@ const Comments = ({
               <hr className={visibleSeparator} />
             )}
           </Fragment>
-        );
+        )
+        }
+        return null
       })}
     </Grid>
   );
@@ -67,6 +72,7 @@ const Comments = ({
 Comments.propTypes = {
   classes: shape({}),
   comments: arrayOf(shape({})),
+  screamId: string,
 };
 
 export default withStyles(styles)(Comments);

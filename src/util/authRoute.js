@@ -7,6 +7,7 @@ import {authSelector} from '../redux/reducers/selectors';
 
 const AuthRoute = ({component: Component, ...children}) => {
   const authenticated = useSelector((state) => authSelector(state));
+  console.log(authenticated)
   return (
     <Route
       {...children}

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {shape, string, arrayOf, number} from 'prop-types';
 import {Link} from 'react-router-dom';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 // material UI
@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import UnfoldMore from '@material-ui/icons/UnfoldMore';
 import withStyles from '@material-ui/core/styles/withStyles';
 // redux
+import {closeScream} from '../redux/actions';
 import {
   authSelector,
   credentialsSelector,
@@ -58,11 +59,9 @@ const Scream = ({
 }) => {
   dayjs.extend(relativeTime);
 
+  const dispatch = useDispatch();
+
   const [open, setOpen] = useState(false);
-
-  const [oldPath, setOldPath] = useState(window.location.pathname);
-
-  const [newPath, setNewPath] = useState('');
 
   const {handle} = useSelector((state) => credentialsSelector(state));
 
@@ -71,19 +70,12 @@ const Scream = ({
   const authenticated = useSelector((state) => authSelector(state));
 
   const handleOpen = () => {
-    setNewPath(`/users/${userHandle}/scream/${screamId}`);
-
-    if (oldPath === newPath) {
-      setOldPath(`/users/${userHandle}`);
-    }
     setOpen(true);
-
-    window.history.pushState(null, null, newPath);
   };
 
   const handleClose = () => {
-    window.history.pushState(null, null, oldPath);
     setOpen(false);
+    dispatch(closeScream());
   };
 
   const deleteButton =
