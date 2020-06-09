@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 // Redux stuff
 import { connect } from 'react-redux';
-import { submitComment } from '../../redux/actions/dataActions';
+import { submitComment } from '../redux/actions/dataActions';
 
 const styles = (theme) => ({
   ...theme

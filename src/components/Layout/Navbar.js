@@ -3,15 +3,15 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import CommonButton from '../../util/CommonButton';
-import PostScream from '../scream/PostScream';
+import PostScream from '../Scream/PostScream';
 import Notifications from './Notifications';
 // MUI stuff
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 // Icons
-import HomeIcon from '@mat../../util/commonButton;
-../Scream/PostScream
+import HomeIcon from '@material-ui/icons/Home';
+
 class Navbar extends Component {
   render() {
     const { authenticated } = this.props;
