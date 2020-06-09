@@ -1,140 +1,65 @@
-import {get} from 'lodash';
-import {createSelector} from 'reselect';
-import ActionTypes from '../types';
+import {
+  SET_USER,
+  SET_AUTHENTICATED,
+  SET_UNAUTHENTICATED,
+  LOADING_USER,
+  LIKE_SCREAM,
+  UNLIKE_SCREAM,
+  MARK_NOTIFICATIONS_READ
+} from '../types';
 
 const initialState = {
   authenticated: false,
-  credentials: {
-    bio: '',
-    createdAt: '',
-    imageUrl: '',
-    location: '',
-    handle: '',
-    website: '',
-  },
-  likes: [],
-  notifications: [],
-  authErrors: {
-    email: '',
-    password: '',
-    general: '',
-    error: '',
-  },
-  signupErrors: {
-    email: '',
-    password: '',
-    confirmPassword: '',
-    handle: '',
-  },
-  getUserError: null,
   loading: false,
+  credentials: {},
+  likes: [],
+  notifications: []
 };
 
-export default function (state = initialState, action) {
+export default function(state = initialState, action) {
   switch (action.type) {
-    case ActionTypes.AUTHENTICATE_USER_REQUEST:
-    case ActionTypes.SIGNUP_USER_REQUEST:
-    case ActionTypes.GET_USER_REQUEST:
-    case ActionTypes.UPLOAD_IMAGE_REQUEST:
-    case ActionTypes.EDIT_USER_DETAILS_REQUEST:
+    case SET_AUTHENTICATED:
       return {
         ...state,
-        loading: true,
+        authenticated: true
       };
-    case ActionTypes.AUTHENTICATE_USER_SUCCESS:
-    case ActionTypes.SIGNUP_USER_SUCCESS:
-      return {
-        ...state,
-        authenticated: true,
-        loading: false,
-      };
-    case ActionTypes.UNAUTHENTICATE_USER:
+    case SET_UNAUTHENTICATED:
       return initialState;
-    case ActionTypes.GET_USER_SUCCESS: {
+    case SET_USER:
       return {
         authenticated: true,
-        ...action.data,
         loading: false,
+        ...action.payload
       };
-    }
-    case ActionTypes.AUTHENTICATE_USER_FAILURE:
+    case LOADING_USER:
       return {
         ...state,
-        authErrors: action.err,
-        loading: false,
+        loading: true
       };
-    case ActionTypes.SIGNUP_USER_FAILURE:
+    case LIKE_SCREAM:
       return {
         ...state,
-        signupErrors: action.err,
-        loading: false,
-      };
-    case ActionTypes.GET_USER_FAILURE:
-      return {
-        ...state,
-        userErrors: action.err,
-        loading: false,
-      };
-    case ActionTypes.UPLOAD_IMAGE_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-      };
-    case ActionTypes.EDIT_USER_DETAILS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-      };
-    case ActionTypes.LIKE_SCREAM_SUCCESS:
-      return {
-        ...state,
-        loading: false,
         likes: [
           ...state.likes,
           {
             userHandle: state.credentials.handle,
-            screamId: action.scream.screamId,
-          },
-        ],
+            screamId: action.payload.screamId
+          }
+        ]
       };
-    case ActionTypes.UNLIKE_SCREAM_SUCCESS:
+    case UNLIKE_SCREAM:
       return {
         ...state,
-        loading: false,
-        likes: state.likes.filter((l) => l.screamId !== action.scream.screamId),
+        likes: state.likes.filter(
+          (like) => like.screamId !== action.payload.screamId
+        )
+      };
+    case MARK_NOTIFICATIONS_READ:
+      state.notifications.forEach((not) => (not.read = true));
+      return {
+        ...state
       };
     default:
       return state;
   }
 }
-
-// user selectors
-export const userStore = (rootState) => get(rootState, 'user', {});
-
-// authSelector
-export const authSelector = createSelector(userStore, (state) =>
-  get(state, 'authenticated', false)
-);
-
-// credentials selector
-export const credentialsSelector = createSelector(userStore, (state) =>
-  get(state, 'credentials', {})
-);
-
-// likes selector
-export const likesSelector = createSelector(userStore, (state) =>
-  get(state, 'likes', [])
-);
-
-// error selectors
-export const authErrors = createSelector(userStore, (state) =>
-  get(state, 'authErrors', {})
-);
-export const signupErrors = createSelector(userStore, (state) =>
-  get(state, 'signupErrors', {})
-);
-
-// loading status selector
-export const userLoadingSelector = createSelector(userStore, (state) =>
-  get(state, 'loading', false)
-);

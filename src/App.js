@@ -11,7 +11,7 @@ import store from "./redux/store";
 import { logoutUser, reAuthenticateUser } from "./redux/actions";
 // utils
 import themeStyles from "./util/theme";
-import AuthRoute from "./util/authRoute";
+import AuthRoute from "./util/AuthRoute";
 // components
 import Navbar from "./components/Navbar";
 // pages
