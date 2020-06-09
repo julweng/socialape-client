@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {shape, string, arrayOf, number} from 'prop-types';
+import {bool, shape, string, arrayOf, number} from 'prop-types';
 import {Link} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import dayjs from 'dayjs';
@@ -46,6 +46,7 @@ const styles = {
 
 const Scream = ({
   classes,
+  openDialog,
   scream,
   scream: {
     body,
@@ -121,6 +122,7 @@ const Scream = ({
           likes={likes}
           handleClose={handleClose}
           open={open}
+          openDialog
         />
       </CardContent>
     </Card>
@@ -133,6 +135,7 @@ Scream.propTypes = {
     image: string,
     content: string,
   }).isRequired,
+  openDialog: bool,
   body: string,
   createdAt: string,
   commentCount: string,

@@ -1,25 +1,23 @@
 import React from 'react';
-import {node} from 'prop-types';
-import {useSelector} from 'react-redux';
 import {Route, Redirect} from 'react-router-dom';
-// selector
-import {authSelector} from '../redux/reducers/selectors';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
 
-const AuthRoute = ({component: Component, ...children}) => {
-  const authenticated = useSelector((state) => authSelector(state));
-  console.log(authenticated)
-  return (
-    <Route
-      {...children}
-      render={(props) =>
-        authenticated === true ? <Redirect to="/" /> : <Component {...props} />
-      }
-    />
-  );
-};
+const AuthRoute = ({component: Component, authenticated, ...rest}) => (
+  <Route
+    {...rest}
+    render={(props) =>
+      authenticated === true ? <Redirect to="/" /> : <Component {...props} />
+    }
+  />
+);
+
+const mapStateToProps = (state) => ({
+  authenticated: state.user.authenticated,
+});
 
 AuthRoute.propTypes = {
-  Component: node,
+  user: PropTypes.object,
 };
 
-export default AuthRoute;
+export default connect(mapStateToProps)(AuthRoute);
