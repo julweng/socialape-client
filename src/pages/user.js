@@ -1,82 +1,89 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import Scream from '../components/scream/Scream';
-import StaticProfile from '../components/profile/StaticProfile';
+import withStyles from '@material-ui/core/styles/withStyles';
+// MUI Stuff
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-
-import ScreamSkeleton from '../util/ScreamSkeleton';
-import ProfileSkeleton from '../util/ProfileSkeleton';
-
+import TextField from '@material-ui/core/TextField';
+// Redux stuff
 import { connect } from 'react-redux';
-import { getUserData } from '../redux/actions/dataActions';
+import { submitComment } from '../../redux/actions/dataActions';
 
-class user extends Component {
+const styles = (theme) => ({
+  ...theme
+});
+
+class CommentForm extends Component {
   state = {
-    profile: null,
-    screamIdParam: null
+    body: '',
+    errors: {}
   };
-  componentDidMount() {
-    const handle = this.props.match.params.handle;
-    const screamId = this.props.match.params.screamId;
 
-    if (screamId) this.setState({ screamIdParam: screamId });
-
-    this.props.getUserData(handle);
-    axios
-      .get(`/user/${handle}`)
-      .then((res) => {
-        this.setState({
-          profile: res.data.user
-        });
-      })
-      .catch((err) => console.log(err));
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.UI.errors) {
+      this.setState({ errors: nextProps.UI.errors });
+    }
+    if (!nextProps.UI.errors && !nextProps.UI.loading) {
+      this.setState({ body: '' });
+    }
   }
+
+  handleChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
+  handleSubmit = (event) => {
+    event.preventDefault();
+    this.props.submitComment(this.props.screamId, { body: this.state.body });
+  };
+
   render() {
-    const { screams, loading } = this.props.data;
-    const { screamIdParam } = this.state;
+    const { classes, authenticated } = this.props;
+    const errors = this.state.errors;
 
-    const screamsMarkup = loading ? (
-      <ScreamSkeleton />
-    ) : screams === null ? (
-      <p>No screams from this user</p>
-    ) : !screamIdParam ? (
-      screams.map((scream) => <Scream key={scream.screamId} scream={scream} />)
-    ) : (
-      screams.map((scream) => {
-        if (scream.screamId !== screamIdParam)
-          return <Scream key={scream.screamId} scream={scream} />;
-        else return <Scream key={scream.screamId} scream={scream} openDialog />;
-      })
-    );
-
-    return (
-      <Grid container spacing={16}>
-        <Grid item sm={8} xs={12}>
-          {screamsMarkup}
-        </Grid>
-        <Grid item sm={4} xs={12}>
-          {this.state.profile === null ? (
-            <ProfileSkeleton />
-          ) : (
-            <StaticProfile profile={this.state.profile} />
-          )}
-        </Grid>
+    const commentFormMarkup = authenticated ? (
+      <Grid item sm={12} style={{ textAlign: 'center' }}>
+        <form onSubmit={this.handleSubmit}>
+          <TextField
+            name="body"
+            type="text"
+            label="Comment on scream"
+            error={errors.comment ? true : false}
+            helperText={errors.comment}
+            value={this.state.body}
+            onChange={this.handleChange}
+            fullWidth
+            className={classes.textField}
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            className={classes.button}
+          >
+            Submit
+          </Button>
+        </form>
+        <hr className={classes.visibleSeparator} />
       </Grid>
-    );
+    ) : null;
+    return commentFormMarkup;
   }
 }
 
-user.propTypes = {
-  getUserData: PropTypes.func.isRequired,
-  data: PropTypes.object.isRequired
+CommentForm.propTypes = {
+  submitComment: PropTypes.func.isRequired,
+  UI: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
+  screamId: PropTypes.string.isRequired,
+  authenticated: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = (state) => ({
-  data: state.data
+  UI: state.UI,
+  authenticated: state.user.authenticated
 });
 
 export default connect(
   mapStateToProps,
-  { getUserData }
-)(user);
+  { submitComment }
+)(withStyles(styles)(CommentForm));
