@@ -13,10 +13,11 @@ const styles = (theme) => ({
     maxWidth: '100%',
     height: 100,
     objectFit: 'cover',
-    borderRadius: '50%'
+    borderRadius: '50%',
+    padding: '0px 40px',
   },
   commentData: {
-    marginLeft: 20
+    marginLeft: 60
   }
 });
 
@@ -29,7 +30,7 @@ class Comments extends Component {
           const { body, createdAt, userImage, userHandle } = comment;
           return (
             <Fragment key={createdAt}>
-              <Grid item sm={12}>
+              <Grid item sm={10}>
                 <Grid container>
                   <Grid item sm={2}>
                     <img
@@ -38,7 +39,7 @@ class Comments extends Component {
                       className={classes.commentImage}
                     />
                   </Grid>
-                  <Grid item sm={9}>
+                  <Grid item sm={8}>
                     <div className={classes.commentData}>
                       <Typography
                         variant="h5"
