@@ -1,190 +1,102 @@
-import axios from "axios";
-import ActionTypes from "../types";
+import {
+  SET_USER,
+  SET_ERRORS,
+  CLEAR_ERRORS,
+  LOADING_UI,
+  SET_UNAUTHENTICATED,
+  LOADING_USER,
+  MARK_NOTIFICATIONS_READ
+} from '../types';
+import axios from 'axios';
 
-const setAuthentication = token => {
-  const FBIdToken = `Bearer ${token}`;
-  localStorage.setItem("FBIdToken", `Bearer ${token}`);
-  axios.defaults.headers.common["Authorization"] = FBIdToken;
-}
-
-// get user
-const getUserRequest = () => {
-  return {
-    type: ActionTypes.GET_USER_REQUEST
-  }
-}
-
-const getUserSuccess = res => {
-  return {
-    type: ActionTypes.GET_USER_SUCCESS,
-    data: res.data
-  }
-}
-
-const getUserFailure = err => {
-  return {
-    type: ActionTypes.GET_USER_FAILURE,
-    err
-  }
-}
-export const getUser = () => dispatch => {
-  dispatch(getUserRequest())
+export const loginUser = (userData, history) => (dispatch) => {
+  dispatch({ type: LOADING_UI });
   axios
-    .get("/user")
-    .then(res => {
-      dispatch(getUserSuccess(res))
+    .post('/login', userData)
+    .then((res) => {
+      setAuthorizationHeader(res.data.token);
+      dispatch(getUserData());
+      dispatch({ type: CLEAR_ERRORS });
+      history.push('/');
     })
-    .catch(err => dispatch(getUserFailure(err)));
-};
-
-// login user
-const loginUserRequest = () => {
-  return {
-    type: ActionTypes.AUTHENTICATE_USER_REQUEST
-  }
-}
-
-const loginUserSuccess = () => {
-  return {
-    type: ActionTypes.AUTHENTICATE_USER_SUCCESS
-  }
-}
-
-const loginUserFailure = err => {
-  return {
-    type: ActionTypes.AUTHENTICATE_USER_FAILURE,
-    err
-  }
-}
-
-export const loginUser = (userData, history) => dispatch => {
-  dispatch(loginUserRequest());
-  axios
-    .post("/login", userData)
-    .then(res => {
-      setAuthentication(res.data.token);
-      dispatch(loginUserSuccess());
-      history.push("/");
-    })
-    .catch(err => {
-      dispatch(loginUserFailure(err.response.data))
+    .catch((err) => {
+      dispatch({
+        type: SET_ERRORS,
+        payload: err.response.data
+      });
     });
 };
 
-// signup user
-const signupUserRequest = () => {
-  return {
-    type: ActionTypes.SIGNUP_USER_REQUEST
-  }
-}
-
-const signupUserSuccess = () => {
-  return {
-    type: ActionTypes.SIGNUP_USER_SUCCESS
-  }
-}
-
-const signupUserFailure = err => {
-  return {
-    type: ActionTypes.SIGNUP_USER_FAILURE,
-    err
-  }
-}
-
-export const signupUser = (userData, history) => dispatch => {
-  dispatch(signupUserRequest());
+export const signupUser = (newUserData, history) => (dispatch) => {
+  dispatch({ type: LOADING_UI });
   axios
-    .post("/signup", userData)
-    .then(res => {
-      setAuthentication(res.data.token);
-      dispatch(signupUserSuccess());
-      history.push("/");
+    .post('/signup', newUserData)
+    .then((res) => {
+      setAuthorizationHeader(res.data.token);
+      dispatch(getUserData());
+      dispatch({ type: CLEAR_ERRORS });
+      history.push('/');
     })
-    .catch(err => {
-      console.log(err.response.data)
-      dispatch(signupUserFailure(err.response.data))
+    .catch((err) => {
+      dispatch({
+        type: SET_ERRORS,
+        payload: err.response.data
+      });
     });
 };
 
-// logout user
-export const logoutUser = () => dispatch => {
-  localStorage.removeItem("FBIdToken");
-  delete axios.defaults.headers.common["Authorization"];
-  dispatch({ type: ActionTypes.UNAUTHENTICATE_USER })
-}
+export const logoutUser = () => (dispatch) => {
+  localStorage.removeItem('FBIdToken');
+  delete axios.defaults.headers.common['Authorization'];
+  dispatch({ type: SET_UNAUTHENTICATED });
+};
 
-// re-authenticate user if token is not expired
-export const reAuthenticateUser = token => dispatch => {
-  dispatch(loginUserSuccess());
-  axios.defaults.headers.common['Authorization'] = token;
-  //dispatch(getUser());
-}
+export const getUserData = () => (dispatch) => {
+  dispatch({ type: LOADING_USER });
+  axios
+    .get('/user')
+    .then((res) => {
+      dispatch({
+        type: SET_USER,
+        payload: res.data
+      });
+    })
+    .catch((err) => console.log(err));
+};
 
-// upload image
-const uploadImageRequest = () => {
-  return {
-    type: ActionTypes.UPLOAD_IMAGE_REQUEST
-  }
-}
-
-const uploadImageSuccess = () => {
-  return {
-    type: ActionTypes.UPLOAD_IMAGE_SUCCESS
-  }
-}
-
-const uploadImageFailure = err => {
-  return {
-    type: ActionTypes.UPLOAD_IMAGE_FAILURE,
-    err
-  }
-}
-
-export const uploadImage = formData => dispatch => {
-  dispatch(uploadImageRequest())
-  axios.post("/user/image", formData)
+export const uploadImage = (formData) => (dispatch) => {
+  dispatch({ type: LOADING_USER });
+  axios
+    .post('/user/image', formData)
     .then(() => {
-      dispatch(getUser())
-      dispatch(uploadImageSuccess())
+      dispatch(getUserData());
     })
-    .catch(err => {
-      console.log(err)
-      dispatch(uploadImageFailure())
+    .catch((err) => console.log(err));
+};
+
+export const editUserDetails = (userDetails) => (dispatch) => {
+  dispatch({ type: LOADING_USER });
+  axios
+    .post('/user', userDetails)
+    .then(() => {
+      dispatch(getUserData());
     })
-}
+    .catch((err) => console.log(err));
+};
 
-// edit user details
-const editUserDetailsRequest = () => {
-  return {
-    type: ActionTypes.EDIT_USER_DETAILS_REQUEST
-  }
-}
+export const markNotificationsRead = (notificationIds) => (dispatch) => {
+  axios
+    .post('/notifications', notificationIds)
+    .then((res) => {
+      dispatch({
+        type: MARK_NOTIFICATIONS_READ
+      });
+    })
+    .catch((err) => console.log(err));
+};
 
-const editUserDetailsSuccess = () => {
-  return {
-    type: ActionTypes.EDIT_USER_DETAILS_SUCCESS
-  }
-}
-
-const editUserDetailsFailure = err => {
-  return {
-    type: ActionTypes.EDIT_USER_DETAILS_FAILURE,
-    err
-  }
-}
-
-export const editUserDetails = userDetails => dispatch => {
-  dispatch(editUserDetailsRequest())
-  axios.post("/user", userDetails)
-  .then(() => {
-    dispatch(editUserDetailsSuccess())
-    dispatch(getUser())
-  })
-  .catch(err => {
-    console.log(err)
-    dispatch(editUserDetailsFailure())
-  })
-}
-
-
-
+const setAuthorizationHeader = (token) => {
+  const FBIdToken = `Bearer ${token}`;
+  localStorage.setItem('FBIdToken', FBIdToken);
+  axios.defaults.headers.common['Authorization'] = FBIdToken;
+};
