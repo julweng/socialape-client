@@ -2,11 +2,13 @@
   "name": "socialape-client",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://julweng.github.io/socialape-client",
   "dependencies": {
     "@material-ui/core": "^4.3.3",
     "@material-ui/icons": "^4.2.1",
     "axios": "^0.19.0",
     "dayjs": "^1.8.28",
+    "gh-pages": "^3.0.0",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
     "prop-types": "^15.7.2",
@@ -20,6 +22,8 @@
     "reselect": "^4.0.0"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
