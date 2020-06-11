@@ -27,11 +27,19 @@ class login extends Component {
       errors: {}
     };
   }
-  componentWillReceiveProps(nextProps) {
+
+  static getDerivedStateFromProps(nextProps) {
     if (nextProps.UI.errors) {
-      this.setState({ errors: nextProps.UI.errors });
+      return {errors: nextProps.UI.errors};
+    } else return null;
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.UI.errors !== this.props.UI.errors) {
+      this.setState({ errors: this.props.UI.errors });
     }
   }
+  
   handleSubmit = (event) => {
     event.preventDefault();
     const userData = {
@@ -39,10 +47,12 @@ class login extends Component {
       password: this.state.password
     };
     this.props.loginUser(userData, this.props.history);
+    this.setState({email: '', password: ''})
   };
   handleChange = (event) => {
     this.setState({
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
+      errors: {}
     });
   };
   render() {
@@ -104,7 +114,7 @@ class login extends Component {
             </Button>
             <br />
             <small>
-              dont have an account ? sign up <Link to="/signup">here</Link>
+              Don't have an account ? sign up <Link to="/signup">here</Link>
             </small>
           </form>
         </Grid>
