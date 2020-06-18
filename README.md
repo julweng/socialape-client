@@ -15,5 +15,6 @@ The app fetches social network posts, allow users to make, delete edit posts and
 ## Technology
 - HTML5
 - CSS3
+
 - JavaScript
 - ReactJS
