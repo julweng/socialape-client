@@ -7,10 +7,14 @@ This is created based on the [Fullstack react social app tutorial](https://www.y
 ## What does the app do
 
 Try the app on this [site](https://social-ape-screams.netlify.app/).
+Test the app with test user:
+"email": "user@email.com",
+"password": "123456"
 The app fetches social network posts, allow users to make, delete edit posts and profiles, as well as view and create comments through this a backend api created on firebase. Find the code [here](https://github.com/julweng/social-app-functions). This app currently has the following features:
 1. fetches all 'screams' and comments. 
 2. allow editing of user's own 'screams' and profile 
 3. allow users to post comments to 'screams'
+4. allow user to sign up 
 
 ## Technology
 - HTML5
